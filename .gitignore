@@ -4,8 +4,7 @@ Nestoria/frontend/.env
 Nestoria/frontend/node_modules/
 Nestoria/frontend/build/
 Nestoria/frontend/dist/
-Nestoria/backend/server.err
-Nestoria/backend/server.log
 *.log
 *.err
+*-env.txt
 _tmp_*
