@@ -1,0 +1,365 @@
+import { useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+
+import Photo from '../components/Photo.jsx';
+import Icon from '../components/Icon.jsx';
+import Stepper from '../components/Stepper.jsx';
+import HotelMap from '../components/HotelMap.jsx';
+import { SkeletonDetail } from '../components/Skeleton.jsx';
+import { hotelsAPI } from '../lib/api.js';
+import { useAuth } from '../context/AuthContext.jsx';
+import { useSavedHotels } from '../hooks/useSavedHotels.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
+
+const HUES = ['warm', 'forest', 'ocean', 'dusk'];
+
+function Rating({ value, size = 12 }) {
+  return (
+    <span className="hcard-rating">
+      <Icon name="star" size={size} style={{ color: 'var(--accent)' }} />
+      <span>{Number(value).toFixed(1)}</span>
+    </span>
+  );
+}
+
+export default function DetailScreen() {
+  const { slug } = useParams();
+  const navigate = useNavigate();
+  const routerLocation = useLocation();
+  const { user } = useAuth();
+  const { isSaved, toggle: toggleSave } = useSavedHotels();
+  const [shareLabel, setShareLabel] = useState('Chia sẻ');
+  const [reserveError, setReserveError] = useState(null);
+
+  const onSave = (id) => {
+    if (!user) {
+      navigate(`/login?next=${encodeURIComponent(routerLocation.pathname + routerLocation.search)}`);
+      return;
+    }
+    toggleSave(id);
+  };
+
+  const share = async (hotel) => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try { await navigator.share({ title: hotel.name, text: hotel.description?.slice(0, 140), url }); return; }
+      catch { /* user cancelled — fall through to copy */ }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareLabel('Đã sao chép');
+      setTimeout(() => setShareLabel('Chia sẻ'), 1800);
+    } catch {
+      setShareLabel('Sao chép thất bại');
+      setTimeout(() => setShareLabel('Chia sẻ'), 1800);
+    }
+  };
+
+  const today    = new Date();
+  const inDate   = new Date(today.getTime() + 14 * 86400000).toISOString().slice(0, 10);
+  const outDate  = new Date(today.getTime() + 17 * 86400000).toISOString().slice(0, 10);
+
+  const [checkin, setCheckin]   = useState(inDate);
+  const [checkout, setCheckout] = useState(outDate);
+  const [guests, setGuests]     = useState(2);
+  const [rooms, setRooms]       = useState(1);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [selectedRoomId, setSelectedRoomId] = useState(null);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['hotel', slug],
+    queryFn: () => hotelsAPI.detail(slug).then((d) => d.hotel),
+  });
+  usePageTitle(data?.name || '');
+
+  if (isLoading) return <SkeletonDetail />;
+  if (!data) return <div className="container-wide" style={{ padding: '120px 0', textAlign: 'center' }}><h2 className="h-2">Không tìm thấy khách sạn</h2></div>;
+
+  const hotel = data;
+  const baseRoom = hotel.rooms?.[0];
+  const nights = Math.max(1, Math.round((new Date(checkout) - new Date(checkin)) / 86400000));
+  const subtotal = baseRoom ? baseRoom.price_per_night * nights * rooms : 0;
+  const taxes    = Math.round(subtotal * 0.18);
+  const total    = subtotal + taxes;
+
+  const reserve = (roomId = selectedRoomId || baseRoom?.id) => {
+    if (user?.role === 'host') {
+      setReserveError("Đối tác không thể đặt phòng. Hãy đăng xuất và sử dụng tài khoản khách hàng để đặt phòng.");
+      return;
+    }
+    setReserveError(null);
+    const params = new URLSearchParams();
+    params.set('room',     roomId);
+    params.set('hotel',    hotel.slug);
+    params.set('checkin',  checkin);
+    params.set('checkout', checkout);
+    params.set('guests',   guests);
+    const target = `/booking?${params.toString()}`;
+    if (!user) { navigate(`/login?next=${encodeURIComponent(target)}`); return; }
+    navigate(target);
+  };
+
+  const tabs = [
+    { key: 'overview',  label: 'Tổng quan' },
+    { key: 'amenities', label: 'Tiện nghi' },
+    { key: 'rooms',     label: 'Phòng' },
+    { key: 'reviews',   label: 'Đánh giá' },
+    { key: 'location',  label: 'Vị trí' },
+  ];
+
+  return (
+    <div className="container-wide" style={{ paddingTop: 24, paddingBottom: 80 }}>
+      <div className="row mb-6" style={{ gap: 8 }}>
+        <button onClick={() => navigate('/hotels')} className="text-muted" style={{ fontSize: 13 }}>← Tất cả chỗ nghỉ</button>
+        <span className="text-muted" style={{ fontSize: 13, opacity: 0.5 }}>/</span>
+        <span className="text-mono" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--ink-3)' }}>{hotel.region}</span>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 24, flexWrap: 'wrap', marginBottom: 24 }}>
+        <div>
+          <div className="row" style={{ gap: 10, marginBottom: 12 }}>
+            {hotel.badge && <span className="tag">{hotel.badge}</span>}
+            <span className="eyebrow">{hotel.region}</span>
+          </div>
+          <h1 className="h-1">{hotel.name}</h1>
+          <div className="row mt-3" style={{ gap: 18, flexWrap: 'wrap' }}>
+            <span className="row" style={{ gap: 6 }}><Icon name="pin" size={14} /> <span style={{ fontSize: 14 }}>{hotel.address || `${hotel.city}, ${hotel.region}`}</span></span>
+            {hotel.rating_avg > 0 && (
+              <span className="row" style={{ gap: 6 }}>
+                <Icon name="star" size={14} style={{ color: 'var(--accent)' }} />
+                <span style={{ fontSize: 14 }}>{Number(hotel.rating_avg).toFixed(1)} · {hotel.rating_count} đánh giá</span>
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="row" style={{ gap: 8 }}>
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={() => onSave(hotel.id)}
+            aria-pressed={isSaved(hotel.id)}
+            style={isSaved(hotel.id) ? { borderColor: 'var(--accent)', color: 'var(--accent)' } : undefined}
+          >
+            <Icon name={isSaved(hotel.id) ? 'heart-fill' : 'heart'} size={14} />
+            {isSaved(hotel.id) ? 'Đã lưu' : 'Lưu'}
+          </button>
+          <button className="btn btn-ghost btn-sm" onClick={() => share(hotel)}>
+            <Icon name="arrow-up-right" size={14} /> {shareLabel}
+          </button>
+        </div>
+      </div>
+
+      <div className="detail-gallery">
+        <div><Photo hue={hotel.hue} src={hotel.hero_image_url} /></div>
+        {HUES.map((h, i) => (
+          <div key={h}><Photo hue={hotel.gallery?.[i]?.url ? undefined : h} src={hotel.gallery?.[i]?.url} /></div>
+        ))}
+      </div>
+
+      <div className="tabs-bar">
+        {tabs.map((t) => (
+          <button key={t.key} className={activeTab === t.key ? 'is-active' : ''} onClick={() => setActiveTab(t.key)}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="detail-shell">
+        <main>
+          {activeTab === 'overview' && (
+            <>
+              <section className="mb-8">
+                <div className="eyebrow mb-3">— Về chỗ nghỉ</div>
+                <p style={{ fontSize: 17, lineHeight: 1.6, maxWidth: 640, color: 'var(--ink-2)' }}>{hotel.description}</p>
+              </section>
+              <section className="mb-8">
+                <div className="eyebrow mb-4">— Thông tin nhanh</div>
+                <div className="facts-grid">
+                  {[
+                    ['Nhận phòng',  String(hotel.checkin_time || '15:00').slice(0,5)],
+                    ['Trả phòng', String(hotel.checkout_time || '11:00').slice(0,5)],
+                    ['Phòng',     (hotel.rooms || []).length || '—'],
+                    ['Đối tác',      hotel.host_business || hotel.host_name || '—'],
+                  ].map(([k,v]) => (
+                    <div key={k}>
+                      <div className="eyebrow mb-2">{k}</div>
+                      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 500 }}>{v}</div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </>
+          )}
+
+          {activeTab === 'amenities' && (
+            <section className="fade-up">
+              <div className="eyebrow mb-4">— Tiện nghi đi kèm</div>
+              <div className="amenities-grid">
+                {(hotel.amenities || []).map((a) => (
+                  <div className="amenity" key={a.key}>
+                    <span className="amenity-icon"><Icon name={a.icon} size={18} /></span>
+                    <span>{a.label}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {activeTab === 'rooms' && (
+            <section className="fade-up">
+              <div className="eyebrow mb-4">— Phòng trống</div>
+              <div className="room-list">
+                {(hotel.rooms || []).map((r) => (
+                  <div className="room" key={r.id}>
+                    <div className="room-img"><Photo hue={r.hue} src={r.image_url} /></div>
+                    <div className="room-content">
+                      <h3 className="room-title">{r.name || r.type}</h3>
+                      <span className="text-muted" style={{ fontSize: 13 }}>{[r.type !== (r.name || r.type) ? r.type : null, r.view, r.beds, r.size_sqm && `${r.size_sqm} m²`].filter(Boolean).join(' · ')}</span>
+                      <div className="room-feats mt-3">
+                        {(r.special_amenities ? String(r.special_amenities).split(',').map((s) => s.trim()).filter(Boolean) : []).map((a) => (
+                          <span key={a} className="chip">{a}</span>
+                        ))}
+                        <span className="chip">Hủy miễn phí</span>
+                      </div>
+                    </div>
+                    <div className="room-action">
+                      <div>
+                        <div className="text-mono" style={{ fontSize: 22, fontWeight: 500, textAlign: 'right' }}>{Number(r.price_per_night).toLocaleString('vi-VN')}₫</div>
+                        <div className="text-muted" style={{ fontSize: 12, textAlign: 'right' }}>/ đêm</div>
+                      </div>
+                      <button className="btn btn-primary btn-sm" onClick={() => { setSelectedRoomId(r.id); reserve(r.id); }}>
+                        Đặt ngay <Icon name="arrow-right" size={12} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {activeTab === 'reviews' && (
+            <section className="fade-up">
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 24, marginBottom: 28 }}>
+                <div>
+                  <div className="h-1" style={{ fontSize: 56, lineHeight: 1 }}>{Number(hotel.rating_avg || 0).toFixed(1)}</div>
+                  <div className="text-muted mt-2" style={{ fontSize: 13 }}>{hotel.rating_count} đánh giá đã xác thực</div>
+                </div>
+              </div>
+
+              <div className="reviews">
+                {(hotel.reviews || []).map((rv) => (
+                  <div className="review" key={rv.id}>
+                    <p className="review-quote">"{rv.comment}"</p>
+                    <div className="review-meta">
+                      <div className="row" style={{ gap: 12 }}>
+                        <span className="avatar">{rv.customer_name?.[0] || '·'}</span>
+                        <div className="review-author">
+                          {rv.customer_name}
+                          <small>{new Date(rv.created_at).toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' })}</small>
+                        </div>
+                      </div>
+                      <Rating value={rv.rating} />
+                    </div>
+                  </div>
+                ))}
+                {(!hotel.reviews || hotel.reviews.length === 0) && (
+                  <p className="text-muted">Chưa có đánh giá nào — hãy là người đầu tiên trải nghiệm.</p>
+                )}
+              </div>
+            </section>
+          )}
+
+          {activeTab === 'location' && (
+            <section className="fade-up">
+                  <div className="eyebrow mb-4">— Bản đồ</div>
+              <div className="hotel-map-wrap">
+                {hotel.latitude != null && hotel.longitude != null ? (
+                  <HotelMap lat={hotel.latitude} lng={hotel.longitude} label={hotel.name} height="100%" />
+                ) : (
+                  <div style={{ height: '100%', display: 'grid', placeItems: 'center', color: 'var(--ink-3)', fontSize: 13 }}>
+                    Tọa độ bản đồ không khả dụng cho chỗ nghỉ này.
+                  </div>
+                )}
+                <div className="hotel-map-label">
+                  <div style={{ fontWeight: 500 }}>{hotel.name}</div>
+                  <div className="text-muted" style={{ fontSize: 12 }}>{hotel.city}, {hotel.region}</div>
+                </div>
+              </div>
+              {hotel.latitude != null && hotel.longitude != null && (
+                <div className="mt-4">
+                  <a
+                    href={`https://www.openstreetmap.org/?mlat=${hotel.latitude}&mlon=${hotel.longitude}#map=15/${hotel.latitude}/${hotel.longitude}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="eyebrow"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--accent)', borderBottom: '1px solid var(--accent)', paddingBottom: 2 }}
+                  >
+                    Mở trong OpenStreetMap <Icon name="arrow-up-right" size={12} />
+                  </a>
+                </div>
+              )}
+            </section>
+          )}
+        </main>
+
+        <aside>
+          <div className="book-card">
+            <div className="book-price-row">
+              <div className="price-big">
+                <span className="price-amount">{Number(baseRoom?.price_per_night || hotel.price_from || 0).toLocaleString('vi-VN')}₫</span>
+                <span className="price-unit">/ đêm</span>
+              </div>
+              {hotel.rating_avg > 0 && <Rating value={hotel.rating_avg} />}
+            </div>
+            <div className="book-dates">
+              <div className="book-date-field">
+                <div className="book-date-label">Nhận phòng</div>
+                <input type="date" value={checkin} onChange={(e) => setCheckin(e.target.value)} className="book-date-value" style={{ border: 0, background: 'transparent', padding: 0, width: '100%' }} />
+              </div>
+              <div className="book-date-field">
+                <div className="book-date-label">Trả phòng</div>
+                <input type="date" value={checkout} onChange={(e) => setCheckout(e.target.value)} className="book-date-value" style={{ border: 0, background: 'transparent', padding: 0, width: '100%' }} />
+              </div>
+            </div>
+            <div className="stack" style={{ '--gap': '12px', padding: '8px 0' }}>
+              <Stepper label="Khách" value={guests} min={1} max={8} onChange={setGuests} />
+              <hr className="divider" />
+              <Stepper label="Phòng" value={rooms} min={1} max={4} onChange={setRooms} />
+            </div>
+
+            <div style={{ padding: '16px 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)', margin: '16px 0' }}>
+              <div className="summary-row"><span className="text-muted">{Number(baseRoom?.price_per_night || 0).toLocaleString('vi-VN')}₫ × {nights} đêm × {rooms} phòng</span><span className="text-mono">{subtotal.toLocaleString('vi-VN')}₫</span></div>
+              <div className="summary-row"><span className="text-muted">Thuế & phí</span><span className="text-mono">{taxes.toLocaleString('vi-VN')}₫</span></div>
+            </div>
+            <div className="summary-row total">
+              <span>Tổng cộng</span>
+              <span className="text-mono">{total.toLocaleString('vi-VN')}₫</span>
+            </div>
+
+            <button className="btn btn-accent btn-lg mt-4" style={{ width: '100%' }} onClick={() => reserve()}>
+              Đặt ngay <Icon name="arrow-right" size={14} />
+            </button>
+            {reserveError ? (
+              <p style={{ color: 'var(--danger)', fontSize: 12, textAlign: 'center', marginTop: 12 }}>{reserveError}</p>
+            ) : (
+              <p className="text-muted mt-3" style={{ fontSize: 12, textAlign: 'center' }}>Bạn chưa bị tính phí.</p>
+            )}
+          </div>
+        </aside>
+      </div>
+
+      <div className="reserve-bar" role="region" aria-label="Đặt phòng">
+        <div className="reserve-bar-price">
+          <span className="price-amount text-mono">
+            {Number(baseRoom?.price_per_night || hotel.price_from || 0).toLocaleString('vi-VN')}₫
+            <span className="text-muted" style={{ fontSize: 12, marginLeft: 4 }}>/ đêm</span>
+          </span>
+          <span className="text-muted">{nights} đêm · {total.toLocaleString('vi-VN')}₫ tổng cộng</span>
+        </div>
+        <button className="btn btn-accent" onClick={() => reserve()}>
+          Đặt ngay <Icon name="arrow-right" size={14} />
+        </button>
+      </div>
+    </div>
+  );
+}
