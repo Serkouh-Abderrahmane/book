@@ -21,7 +21,7 @@ export default function ReservationScreen() {
   const { id } = useParams();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  usePageTitle('Đặt phòng');
+  usePageTitle('Yêu cầu thuê');
 
   const bookingQ = useQuery({
     queryKey: ['booking', id],
@@ -43,8 +43,8 @@ export default function ReservationScreen() {
   if (!bookingQ.data) {
     return (
       <div className="container" style={{ padding: '120px 0', textAlign: 'center', maxWidth: 600 }}>
-        <h2 className="h-2">Không tìm thấy đặt phòng</h2>
-        <p className="text-muted mt-3">Không thể tìm thấy đặt phòng — có thể nó đã bị xóa hoặc bạn không có quyền truy cập.</p>
+<h2 className="h-2">Không tìm thấy yêu cầu thuê</h2>
+          <p className="text-muted mt-3">Không thể tìm thấy yêu cầu thuê — có thể nó đã bị xóa hoặc bạn không có quyền truy cập.</p>
         <button className="btn btn-primary mt-6" onClick={() => navigate('/profile')}>Về hồ sơ</button>
       </div>
     );
@@ -60,7 +60,7 @@ export default function ReservationScreen() {
   return (
     <div className="container" style={{ paddingTop: 36, paddingBottom: 80, maxWidth: 1100 }}>
       <button onClick={() => navigate('/profile')} className="text-muted mb-4" style={{ fontSize: 13 }}>
-        ← Tất cả đặt phòng
+        ← Tất cả yêu cầu thuê
       </button>
 
       <div className="row" style={{ gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
@@ -89,11 +89,11 @@ export default function ReservationScreen() {
 
           <div className="facts-grid-2">
             <div>
-              <div className="eyebrow mb-2">Nhận phòng</div>
-              <div style={{ fontSize: 18 }}>{fmtDate(b.checkin_date)}</div>
-            </div>
-            <div>
-              <div className="eyebrow mb-2">Trả phòng</div>
+<div className="eyebrow mb-2">Nhận nhà</div>
+          <div className="h-3">{checkinDisplay}</div>
+        </div>
+        <div>
+          <div className="eyebrow mb-2">Trả nhà</div>
               <div style={{ fontSize: 18 }}>{fmtDate(b.checkout_date)}</div>
             </div>
             <div>
@@ -108,7 +108,7 @@ export default function ReservationScreen() {
 
           {b.hotel_phone && (
             <div className="mt-6">
-              <div className="eyebrow mb-2">Liên hệ chỗ nghỉ</div>
+              <div className="eyebrow mb-2">Liên hệ chủ nhà</div>
               <a href={`tel:${b.hotel_phone}`} className="row" style={{ gap: 8, fontSize: 14, color: 'var(--ink)' }}>
                 <Icon name="phone" size={14} /> {b.hotel_phone}
               </a>
@@ -123,16 +123,16 @@ export default function ReservationScreen() {
 
           <div className="row mt-8" style={{ gap: 12, flexWrap: 'wrap' }}>
             <button className="btn btn-ghost" onClick={() => navigate(`/hotel/${b.hotel_slug}`)}>
-              Mở trang khách sạn <Icon name="arrow-up-right" size={14} />
+              Xem trang nhà <Icon name="arrow-up-right" size={14} />
             </button>
             {isCancellable && (
               <button
                 className="btn btn-ghost"
                 style={{ color: 'var(--danger)', borderColor: 'color-mix(in oklab, var(--danger) 30%, var(--line))' }}
                 disabled={cancelMut.isPending}
-                onClick={() => { if (confirm('Hủy đặt phòng này? Hủy miễn phí trong vòng 48 giờ trước khi nhận phòng.')) cancelMut.mutate(); }}
+                onClick={() => { if (confirm('Hủy yêu cầu thuê này? Hủy miễn phí trong vòng 48 giờ trước khi nhận nhà.')) cancelMut.mutate(); }}
               >
-                {cancelMut.isPending ? 'Đang hủy…' : 'Hủy đặt phòng'}
+                {cancelMut.isPending ? 'Đang hủy…' : 'Hủy yêu cầu thuê'}
               </button>
             )}
             {isCompleted && !b.has_review && (
@@ -152,7 +152,7 @@ export default function ReservationScreen() {
           <div className="mt-6">
             <div className="eyebrow mb-2">Thanh toán</div>
             <div className="text-muted" style={{ fontSize: 13 }}>
-              {b.payment_status === 'paid' ? 'Đã thanh toán' : b.payment_status === 'refunded' ? 'Đã hoàn tiền' : 'Trả tại khách sạn'}
+              {b.payment_status === 'paid' ? 'Đã thanh toán' : b.payment_status === 'refunded' ? 'Đã hoàn tiền' : 'Trả khi nhận nhà'}
             </div>
           </div>
         </aside>

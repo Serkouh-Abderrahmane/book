@@ -22,19 +22,19 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = (token, user) => {
-    localStorage.setItem('nestoria-token', token);
-    localStorage.setItem('nestoria-user', JSON.stringify(user));
+    try { localStorage?.setItem('nestoria-token', token); } catch (_) {}
+    try { localStorage?.setItem('nestoria-user', JSON.stringify(user)); } catch (_) {}
     setState({ token, user });
   };
 
   const logout = () => {
-    localStorage.removeItem('nestoria-token');
-    localStorage.removeItem('nestoria-user');
+    try { localStorage?.removeItem('nestoria-token'); } catch (_) {}
+    try { localStorage?.removeItem('nestoria-user'); } catch (_) {}
     setState({ token: null, user: null });
   };
 
   const setUser = (user) => {
-    localStorage.setItem('nestoria-user', JSON.stringify(user));
+    try { localStorage?.setItem('nestoria-user', JSON.stringify(user)); } catch (_) {}
     setState((s) => ({ ...s, user }));
   };
 

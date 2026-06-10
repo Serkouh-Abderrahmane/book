@@ -1,12 +1,18 @@
 import axios from 'axios';
 
+const apiBaseUrl = import.meta.env.VITE_API_URL;
+if (!apiBaseUrl && typeof window !== 'undefined') {
+  console.error('[Chi Vinh Land] VITE_API_URL is not set. API calls will fail.');
+}
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: apiBaseUrl || '/api',
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('nestoria-token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  try {
+    const token = localStorage?.getItem('nestoria-token');
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  } catch (_) {}
   return config;
 });
 
@@ -14,9 +20,10 @@ api.interceptors.response.use(
   (r) => r,
   (err) => {
     if (err.response?.status === 401) {
-      // Token rejected. Clear and redirect to login on the next render.
-      localStorage.removeItem('nestoria-token');
-      localStorage.removeItem('nestoria-user');
+      try {
+        localStorage?.removeItem('nestoria-token');
+        localStorage?.removeItem('nestoria-user');
+      } catch (_) {}
     }
     return Promise.reject(err);
   }

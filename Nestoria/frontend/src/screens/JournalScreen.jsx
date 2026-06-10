@@ -6,14 +6,14 @@ import { usePageTitle } from '../hooks/usePageTitle.js';
 
 export default function JournalScreen() {
   const [featured, ...rest] = JOURNAL_POSTS;
-  usePageTitle('Tạp chí');
+  usePageTitle('Tin tức');
   return (
     <div className="container-wide" style={{ paddingTop: 36, paddingBottom: 80 }}>
       <div className="mb-8">
-        <div className="eyebrow mb-3">— Tạp chí</div>
-        <h1 className="h-1" style={{ maxWidth: 720 }}>Ghi chép từ những chuyến đi.</h1>
+        <div className="eyebrow mb-3">— Tin tức</div>
+        <h1 className="h-1" style={{ maxWidth: 720 }}>Ghi chép từ những căn nhà.</h1>
         <p className="section-sub mt-3" style={{ maxWidth: 540, fontSize: 16 }}>
-          Những bài viết dài về các vùng miền mà Phong Cảnh Việt khám phá — điều gì khiến một chuyến lưu trú đáng để bay đến, điều gì khiến một mùa đáng để chờ đợi.
+          Những bài viết về các khu vực mà Chi Vinh Land khám phá — điều gì khiến một căn nhà đáng để ở.
         </p>
       </div>
 

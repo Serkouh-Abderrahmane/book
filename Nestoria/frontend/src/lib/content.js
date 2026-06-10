@@ -123,36 +123,36 @@ export const JOURNAL_POSTS = [
 
 export const FAQ_GROUPS = [
   {
-    title: 'Đặt phòng',
+    title: 'Thuê nhà',
     items: [
-      { q: 'Làm thế nào để đặt phòng?', a: 'Tìm chỗ nghỉ qua mục Khám phá hoặc thanh tìm kiếm trang chủ, chọn ngày và phòng, sau đó nhấn Đặt ngay. Bạn sẽ được hướng dẫn qua ba bước — thông tin khách, thanh toán, xác nhận. Bạn sẽ không bị tính phí cho đến bước xác nhận.' },
-      { q: 'Tôi có thể đặt nhiều phòng cùng lúc không?', a: 'Hiện tại, mỗi lần đặt một phòng. Nếu bạn cần nhiều phòng trong cùng một chỗ nghỉ cho cùng ngày, hãy đặt riêng lẻ — tất cả sẽ hiển thị dưới một hồ sơ khách hàng.' },
-      { q: 'Chính sách hủy đặt phòng như thế nào?', a: 'Hủy miễn phí trong vòng 48 giờ trước khi nhận phòng. Trong vòng 48 giờ, đêm đầu tiên sẽ bị tính phí. Sau khi nhận phòng, không hoàn tiền — nhưng đối tác có thể cung cấp tín dụng cho lần lưu trú sau; hãy liên hệ trực tiếp với chỗ nghỉ.' },
-      { q: 'Tại sao đặt phòng của tôi bị từ chối với thông báo "Phòng đã được đặt"?', a: 'Có hai người cùng đặt một phòng cho khoảng thời gian trùng nhau và người kia đã hoàn tất trước. Hãy chọn ngày khác hoặc phòng khác.' },
+      { q: 'Làm thế nào để thuê nhà?', a: 'Tìm nhà cho thuê qua mục Tìm nhà hoặc thanh tìm kiếm trang chủ, chọn ngày và loại nhà, sau đó nhấn Thuê ngay. Bạn sẽ được hướng dẫn qua ba bước — thông tin người thuê, thanh toán, xác nhận. Bạn sẽ không bị tính phí cho đến bước xác nhận.' },
+      { q: 'Tôi có thể thuê nhiều nhà cùng lúc không?', a: 'Hiện tại, mỗi lần thuê một nhà. Nếu bạn cần nhiều căn trong cùng một khu vực cho cùng ngày, hãy tạo yêu cầu riêng lẻ — tất cả sẽ hiển thị dưới một hồ sơ người thuê.' },
+      { q: 'Chính sách hủy yêu cầu thuê như thế nào?', a: 'Hủy miễn phí trong vòng 48 giờ trước khi nhận nhà. Trong vòng 48 giờ, tháng đầu tiên sẽ bị tính phí. Sau khi nhận nhà, không hoàn tiền — nhưng chủ nhà có thể cung cấp tín dụng cho lần thuê sau; hãy liên hệ trực tiếp với chủ nhà.' },
+      { q: 'Tại sao yêu cầu thuê của tôi bị từ chối với thông báo "Nhà đã được thuê"?', a: 'Có hai người cùng yêu cầu một căn nhà cho khoảng thời gian trùng nhau và người kia đã hoàn tất trước. Hãy chọn ngày khác hoặc căn nhà khác.' },
     ],
   },
   {
     title: 'Tài khoản',
     items: [
       { q: 'Tôi quên mật khẩu.', a: 'Tính năng đặt lại mật khẩu chưa hoạt động. Hãy đăng nhập bằng Google hoặc liên hệ với chúng tôi qua trang Liên hệ để được đặt lại thủ công.' },
-      { q: 'Tôi có thể có cả tài khoản khách và chủ nhà không?', a: 'Có — chúng nằm ở bảng riêng biệt, vì vậy bạn có thể đăng ký cả hai bằng cùng một email. Sử dụng nút chuyển đổi vai trò trên màn hình Đăng nhập để chọn tài khoản muốn đăng nhập.' },
-      { q: 'Làm thế nào để xóa tài khoản?', a: 'Gửi email đến contact@phongcanhviet.example với tiêu đề "Xóa tài khoản của tôi" và chúng tôi sẽ xử lý trong vòng bảy ngày.' },
+      { q: 'Tôi có thể có cả tài khoản người thuê và chủ nhà không?', a: 'Có — chúng nằm ở bảng riêng biệt, vì vậy bạn có thể đăng ký cả hai bằng cùng một email. Sử dụng nút chuyển đổi vai trò trên màn hình Đăng nhập để chọn tài khoản muốn đăng nhập.' },
+      { q: 'Làm thế nào để xóa tài khoản?', a: 'Gửi email đến contact@chivinhland.example với tiêu đề "Xóa tài khoản của tôi" và chúng tôi sẽ xử lý trong vòng bảy ngày.' },
     ],
   },
   {
     title: 'Thanh toán',
     items: [
-      { q: 'Các phương thức thanh toán được chấp nhận?', a: 'Thẻ (Visa, Mastercard), chuyển khoản ngân hàng và thanh toán tại khách sạn cho những chỗ nghỉ cho phép. Lựa chọn có ở Bước 2 của quy trình đặt phòng.' },
-      { q: 'Tại sao thuế lại 10%?', a: 'Đó là thuế VAT áp dụng cho phòng khách sạn tại Việt Nam. Chúng tôi hiển thị mức thuế áp dụng cho phòng bạn chọn.' },
-      { q: 'Khi nào đối tác nhận được tiền?', a: 'Đối tác được thanh toán hàng tháng, vào ngày 1, cho tất cả các đặt phòng đã hoàn tất trong tháng trước — sau khi trừ hoàn tiền và phí nền tảng 10% của chúng tôi.' },
+      { q: 'Các phương thức thanh toán được chấp nhận?', a: 'Thẻ (Visa, Mastercard), chuyển khoản ngân hàng và thanh toán tại nhà cho những chủ nhà cho phép. Lựa chọn có ở Bước 2 của quy trình thuê nhà.' },
+      { q: 'Tại sao thuế lại 10%?', a: 'Đó là thuế VAT áp dụng cho nhà cho thuê tại Việt Nam. Chúng tôi hiển thị mức thuế áp dụng cho căn nhà bạn chọn.' },
+      { q: 'Khi nào chủ nhà nhận được tiền?', a: 'Chủ nhà được thanh toán hàng tháng, vào ngày 1, cho tất cả các hợp đồng thuê đã hoàn tất trong tháng trước — sau khi trừ hoàn tiền và phí nền tảng 10% của chúng tôi.' },
     ],
   },
   {
-    title: 'Đối tác',
+    title: 'Chủ nhà',
     items: [
-      { q: 'Làm thế nào để đăng ký chỗ nghỉ?', a: 'Đăng ký với vai trò đối tác trên màn hình Đăng nhập → chuyển đổi vai trò: Tôi muốn cho thuê. Sau đó, không gian làm việc Đối tác sẽ hướng dẫn bạn qua ba bước: thông tin cơ bản, địa chỉ + tiện nghi và phòng.' },
-      { q: 'Loại chỗ nghỉ nào được chấp nhận?', a: 'Chỗ nghỉ độc lập, có cá tính — nhà cổ được phục hồi, nhà gỗ trên đồn điền, nhà biển, khách sạn boutique nhỏ (dưới 20 phòng). Chúng tôi không nhận khách sạn chuỗi.' },
-      { q: 'Hoa hồng là bao nhiêu?', a: '10% trên tổng giá trị đặt phòng. Không có phí niêm yết, không phí cố định mỗi lần đặt, không có giá chênh lệch theo giờ cao điểm.' },
+      { q: 'Làm thế nào để đăng tin cho thuê?', a: 'Đăng ký với vai trò chủ nhà trên màn hình Đăng nhập → chuyển đổi vai trò: Tôi cho thuê nhà. Sau đó, không gian Chủ nhà sẽ hướng dẫn bạn qua ba bước: thông tin cơ bản, địa chỉ + tiện nghi và phòng.' },
+      { q: 'Loại nhà nào được chấp nhận?', a: 'Nhà cho thuê độc lập, có cá tính — nhà cổ được phục hồi, nhà gỗ, nhà phố, căn hộ cao cấp. Chúng tôi không nhận nhà cho thuê theo chuỗi.' },
+      { q: 'Hoa hồng là bao nhiêu?', a: '10% trên tổng giá trị hợp đồng thuê. Không có phí niêm yết, không phí cố định, không có giá chênh lệch theo giờ cao điểm.' },
     ],
   },
 ];

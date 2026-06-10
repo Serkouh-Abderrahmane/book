@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "http-proxy": "^1.18.1",
+    "localtunnel": "^2.0.2"
+  }
+}

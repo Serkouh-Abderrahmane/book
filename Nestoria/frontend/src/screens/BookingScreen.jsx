@@ -88,7 +88,7 @@ export default function BookingScreen() {
   const guestsQ  = Number(params.get('guests') || 2);
 
   const [step, setStep] = useState(0);
-  usePageTitle('Đặt phòng');
+  usePageTitle('Thuê nhà');
   const [bookingId, setBookingId] = useState(null);
   const [terminalOpen, setTerminalOpen] = useState(false);
   const [form, setForm] = useState({
@@ -112,8 +112,8 @@ export default function BookingScreen() {
   if (user?.role === 'host') {
     return (
       <div className="container" style={{ padding: '120px 0', textAlign: 'center', maxWidth: 720 }}>
-        <h2 className="h-2">Đối tác không thể đặt phòng.</h2>
-        <p className="text-muted mt-3">Đặt phòng được thực hiện từ tài khoản khách hàng. Hãy đăng xuất và đăng nhập với vai trò khách để tiếp tục.</p>
+<h2 className="h-2">Chủ nhà không thể thuê nhà.</h2>
+          <p className="text-muted mt-3">Yêu cầu thuê nhà được thực hiện từ tài khoản người thuê. Hãy đăng xuất và đăng nhập với vai trò người thuê để tiếp tục.</p>
         <button className="btn btn-primary mt-6" onClick={() => { logout(); navigate('/login'); }}>Đăng xuất</button>
       </div>
     );
@@ -122,13 +122,23 @@ export default function BookingScreen() {
   if (!roomId || !checkin || !checkout) {
     return (
       <div className="container" style={{ padding: '120px 0', textAlign: 'center', maxWidth: 800 }}>
-        <h2 className="h-2">Vui lòng chọn chỗ nghỉ trước.</h2>
-        <p className="text-muted mt-3">Chọn khách sạn và ngày, sau đó chúng tôi sẽ lo phần còn lại.</p>
-        <button className="btn btn-primary mt-6" onClick={() => navigate('/hotels')}>Tìm chỗ nghỉ</button>
+<h2 className="h-2">Vui lòng chọn nhà trước.</h2>
+          <p className="text-muted mt-3">Chọn nhà và ngày, sau đó chúng tôi sẽ lo phần còn lại.</p>
+          <button className="btn btn-primary mt-6" onClick={() => navigate('/hotels')}>Tìm nhà</button>
       </div>
     );
   }
   if (roomQ.isLoading || hotelQ.isLoading) return <div className="container" style={{ padding: 80, textAlign: 'center' }}>Đang tải…</div>;
+
+  if (roomQ.isError || hotelQ.isError) {
+    return (
+      <div className="container" style={{ padding: '80px 0', textAlign: 'center', maxWidth: 720 }}>
+        <h2 className="h-2">Không thể tải thông tin phòng.</h2>
+        <p className="text-muted mt-3">Vui lòng kiểm tra kết nối và thử lại.</p>
+        <button className="btn btn-primary mt-6" onClick={() => { roomQ.refetch(); hotelQ.refetch(); }}>Thử lại</button>
+      </div>
+    );
+  }
 
   const room  = roomQ.data;
   const hotel = hotelQ.data;
@@ -138,7 +148,7 @@ export default function BookingScreen() {
   const total    = subtotal + taxes;
 
   const steps = [
-    { id: 0, label: 'Thông tin khách' },
+    { id: 0, label: 'Thông tin người thuê' },
     { id: 1, label: 'Thanh toán' },
     { id: 2, label: 'Xác nhận' },
   ];
@@ -148,7 +158,7 @@ export default function BookingScreen() {
       <button onClick={() => navigate(`/hotel/${hotel.slug}`)} className="text-muted mb-4" style={{ fontSize: 13 }}>
         ← Quay lại {hotel.name}
       </button>
-      <h1 className="h-1 mb-6">Đặt chỗ nghỉ của bạn.</h1>
+      <h1 className="h-1 mb-6">Thuê nhà của bạn.</h1>
 
       <div className="book-steps">
         {steps.map((s, i) => (
@@ -202,7 +212,7 @@ export default function BookingScreen() {
               <div className="row mb-4" style={{ gap: 8 }}>
                 {['card','upi','paylater'].map((m) => (
                   <button key={m} className={`chip ${form.method === m ? 'is-active' : ''}`} onClick={() => upd('method', m)}>
-                    {m === 'card' ? 'Thẻ' : m === 'upi' ? 'Chuyển khoản' : 'Trả tại khách sạn'}
+                    {m === 'card' ? 'Thẻ' : m === 'upi' ? 'Chuyển khoản' : 'Trả khi nhận nhà'}
                   </button>
                 ))}
               </div>
@@ -235,8 +245,8 @@ export default function BookingScreen() {
                   <div className="row" style={{ gap: 12 }}>
                     <Icon name="sparkle" size={18} />
                     <div>
-                      <div style={{ fontWeight: 500 }}>Thanh toán khi nhận phòng.</div>
-                      <p className="text-muted mt-2" style={{ fontSize: 13 }}>Thẻ của bạn được giữ để đảm bảo đặt phòng. Khách sạn sẽ tính phí khi bạn nhận phòng.</p>
+<div style={{ fontWeight: 500 }}>Thanh toán khi nhận nhà.</div>
+          <p className="text-muted mt-2" style={{ fontSize: 13 }}>Thẻ của bạn được giữ để đảm bảo yêu cầu thuê. Chủ nhà sẽ tính phí khi bạn nhận nhà.</p>
                     </div>
                   </div>
                 </div>
@@ -245,12 +255,12 @@ export default function BookingScreen() {
               <hr className="divider mt-6" />
               <div className="row mt-4" style={{ gap: 12 }}>
                 <Icon name="shield" size={18} />
-                <span className="text-muted" style={{ fontSize: 13 }}>Mã hóa khi truyền. Hủy miễn phí trong vòng 48 giờ trước khi nhận phòng.</span>
+                <span className="text-muted" style={{ fontSize: 13 }}>Mã hóa khi truyền. Hủy miễn phí trong vòng 48 giờ trước khi nhận nhà.</span>
               </div>
 
               {createMut.isError && (
                 <p style={{ color: 'var(--danger)', marginTop: 16, fontSize: 13 }}>
-                  {createMut.error?.response?.data?.error || 'Đặt phòng thất bại. Vui lòng thử lại.'}
+                  {createMut.error?.response?.data?.error || 'Thuê nhà thất bại. Vui lòng thử lại.'}
                 </p>
               )}
 
@@ -260,7 +270,7 @@ export default function BookingScreen() {
                   if (form.method === 'paylater') createMut.mutate();
                   else setTerminalOpen(true);
                 }} disabled={createMut.isPending || terminalOpen}>
-                  {createMut.isPending ? 'Đang xác nhận…' : `Xác nhận đặt phòng · ${total.toLocaleString('vi-VN')}₫`}
+                  {createMut.isPending ? 'Đang xác nhận…' : `Xác nhận thuê · ${total.toLocaleString('vi-VN')}₫`}
                 </button>
               </div>
             </div>
@@ -276,14 +286,14 @@ export default function BookingScreen() {
               <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--accent-soft)', color: 'var(--accent)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
                 <Icon name="check" size={32} />
               </div>
-              <h2 className="h-1">Đặt phòng thành công!</h2>
+              <h2 className="h-1">Yêu cầu thuê đã gửi!</h2>
               <p className="text-muted mt-3" style={{ maxWidth: 380, margin: '12px auto 0' }}>
-                Xác nhận đang được gửi đến {form.email}. Đội ngũ {hotel.name} sẽ liên hệ với bạn trước một ngày nhận phòng.
+                Xác nhận đang được gửi đến {form.email}. Chủ nhà sẽ liên hệ với bạn trước ngày nhận nhà.
               </p>
               <div className="card mt-6" style={{ padding: 20, textAlign: 'left', maxWidth: 400, margin: '32px auto 0' }}>
                 <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <div className="eyebrow">Mã đặt phòng</div>
+                    <div className="eyebrow">Mã yêu cầu thuê</div>
                     <div className="text-mono mt-2" style={{ fontSize: 16 }}>PCV-{String(bookingId).padStart(6, '0')}</div>
                   </div>
                   <Icon name="arrow-up-right" size={20} />
@@ -291,7 +301,7 @@ export default function BookingScreen() {
               </div>
               <div className="row mt-8" style={{ justifyContent: 'center', gap: 12 }}>
                 <button className="btn btn-primary" onClick={() => navigate(`/reservations/${bookingId}`)}>
-                  Xem đặt phòng <Icon name="arrow-right" size={14} />
+                  Xem yêu cầu thuê <Icon name="arrow-right" size={14} />
                 </button>
                 <button className="btn btn-ghost" onClick={() => navigate('/')}>Về trang chủ</button>
               </div>
@@ -317,8 +327,8 @@ export default function BookingScreen() {
           </div>
 
           <div className="summary-row"><span className="text-muted">Phòng</span><span className="text-mono">{room.type}</span></div>
-          <div className="summary-row"><span className="text-muted">Nhận phòng</span><span className="text-mono">{checkin}</span></div>
-          <div className="summary-row"><span className="text-muted">Trả phòng</span><span className="text-mono">{checkout}</span></div>
+          <div className="summary-row"><span className="text-muted">Nhận nhà</span><span className="text-mono">{checkin}</span></div>
+          <div className="summary-row"><span className="text-muted">Trả nhà</span><span className="text-mono">{checkout}</span></div>
           <div className="summary-row"><span className="text-muted">Đêm</span><span className="text-mono">{nights}</span></div>
           <div className="summary-row"><span className="text-muted">Khách</span><span className="text-mono">{guestsQ}</span></div>
 

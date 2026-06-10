@@ -35,13 +35,27 @@ export const ACCENT_PRESETS = {
 
 const DEFAULT = { accent: 'terracotta' };
 
+function supportsOklch() {
+  try {
+    return typeof CSS !== 'undefined' && typeof CSS.supports === 'function' && CSS.supports('color', 'oklch(0.5 0.1 155)');
+  } catch { return false; }
+}
+
+const OKLCH_SUPPORTED = supportsOklch();
+
 function applyTweaks(tweaks, theme) {
   const preset = ACCENT_PRESETS[tweaks.accent] || ACCENT_PRESETS.terracotta;
   const colors = preset[theme] || preset.light;
   const r = document.documentElement;
-  r.style.setProperty('--accent', colors.accent);
-  r.style.setProperty('--accent-soft', colors.soft);
-  r.style.setProperty('--accent-ink', colors.ink);
+  if (OKLCH_SUPPORTED) {
+    r.style.setProperty('--accent', colors.accent);
+    r.style.setProperty('--accent-soft', colors.soft);
+    r.style.setProperty('--accent-ink', colors.ink);
+  } else {
+    r.style.setProperty('--accent', preset.swatch);
+    r.style.setProperty('--accent-soft', preset.swatch + '33');
+    r.style.setProperty('--accent-ink', '#111827');
+  }
 }
 
 export function useTweaks(theme) {
@@ -52,8 +66,12 @@ export function useTweaks(theme) {
     } catch { return DEFAULT; }
   });
   useEffect(() => {
-    localStorage.setItem('nestoria-tweaks', JSON.stringify(tweaks));
-    applyTweaks(tweaks, theme);
+    try {
+      localStorage?.setItem('nestoria-tweaks', JSON.stringify(tweaks));
+    } catch (_) {}
+    try {
+      applyTweaks(tweaks, theme);
+    } catch (_) {}
   }, [tweaks, theme]);
   const setTweak = useCallback((k, v) => setTweaks((s) => ({ ...s, [k]: v })), []);
   return [tweaks, setTweak];

@@ -1,0 +1,2 @@
+FRONTEND_URL=https://tame-paws-warn.loca.lt
+BACKEND_URL=https://afraid-forks-wonder.loca.lt

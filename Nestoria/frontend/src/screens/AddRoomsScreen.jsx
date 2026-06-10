@@ -59,7 +59,7 @@ export default function AddRoomsScreen() {
   const [createdHotel, setCreatedHotel] = useState(editingHotelId ? { id: editingHotelId, slug: hotelForEdit?.slug } : null);
   const [basics, setBasics] = useState(null);
   const [address, setAddress] = useState(null);
-  usePageTitle('Thêm chỗ nghỉ');
+  usePageTitle('Thêm nhà cho thuê');
 
   const basicsForm = useForm({
     resolver: zodResolver(hotelBasicsSchema),
@@ -144,8 +144,8 @@ export default function AddRoomsScreen() {
   return (
     <div className="container" style={{ paddingTop: 36, paddingBottom: 80, maxWidth: 980 }}>
       <button onClick={() => navigate('/host/dashboard')} className="text-muted mb-4" style={{ fontSize: 13 }}>← Về bảng điều khiển</button>
-      <div className="eyebrow mb-3">— {editingHotelId ? `Quản lý · ${hotelForEdit?.name || 'chỗ nghỉ'}` : 'Niêm yết chỗ nghỉ mới'}</div>
-      <h1 className="h-1 mb-6">{editingHotelId ? 'Thêm phòng.' : 'Cùng niêm yết chỗ nghỉ của bạn.'}</h1>
+      <div className="eyebrow mb-3">— {editingHotelId ? `Quản lý · ${hotelForEdit?.name || 'nhà cho thuê'}` : 'Niêm yết nhà cho thuê mới'}</div>
+      <h1 className="h-1 mb-6">{editingHotelId ? 'Thêm phòng.' : 'Cùng niêm yết nhà cho thuê của bạn.'}</h1>
 
       <div className="book-steps">
         {steps.map((s, i) => (
@@ -162,9 +162,9 @@ export default function AddRoomsScreen() {
       <div className="card" style={{ padding: 36 }}>
         {step === 0 && (
           <form className="fade-up" onSubmit={basicsForm.handleSubmit(submitBasics)}>
-            <h2 className="h-3 mb-4">Kể về chỗ nghỉ của bạn</h2>
+            <h2 className="h-3 mb-4">Kể về nhà cho thuê của bạn</h2>
             <div className="field mb-3">
-              <label className="field-label">Tên chỗ nghỉ</label>
+              <label className="field-label">Tên nhà cho thuê</label>
               <input className="input" placeholder="The Marigold House" {...basicsForm.register('name')} />
               {basicsForm.formState.errors.name && <small style={{ color: 'var(--danger)' }}>{basicsForm.formState.errors.name.message}</small>}
             </div>
@@ -185,7 +185,7 @@ export default function AddRoomsScreen() {
             </div>
             <div className="field mt-3 mb-3">
               <label className="field-label">Mô tả ngắn</label>
-              <textarea className="input" rows={4} placeholder="Cho khách biết điều gì làm nơi này đặc biệt..." {...basicsForm.register('description')} />
+              <textarea className="input" rows={4} placeholder="Cho người thuê biết điều gì làm nơi này đặc biệt..." {...basicsForm.register('description')} />
               {basicsForm.formState.errors.description && <small style={{ color: 'var(--danger)' }}>{basicsForm.formState.errors.description.message}</small>}
             </div>
             <div className="field mb-4">
@@ -274,7 +274,7 @@ export default function AddRoomsScreen() {
             </div>
 
             {createHotelMut.isError && (
-              <p style={{ color: 'var(--danger)', fontSize: 13 }}>{createHotelMut.error?.response?.data?.error || 'Không thể tạo chỗ nghỉ'}</p>
+              <p style={{ color: 'var(--danger)', fontSize: 13 }}>{createHotelMut.error?.response?.data?.error || 'Không thể tạo nhà cho thuê'}</p>
             )}
 
             <div className="row mt-8" style={{ justifyContent: 'space-between' }}>
@@ -325,7 +325,7 @@ export default function AddRoomsScreen() {
                     </div>
                     <div style={{ textAlign: 'right' }}>
                     <div className="text-mono" style={{ fontSize: 18 }}>₫{Number(r.price_per_night).toLocaleString('vi-VN')}</div>
-                    <div className="eyebrow mt-1">/ đêm</div>
+                    <div className="eyebrow mt-1">/ tháng</div>
                   </div>
                   <button className="stepper-btn" onClick={() => removeRoomMut.mutate(r.id)} aria-label="Xóa phòng">
                       <Icon name="x" size={14} />
@@ -348,7 +348,7 @@ export default function AddRoomsScreen() {
                     </div>
                   </div>
                   <div className="form-row-3" style={{ marginTop: 12 }}>
-                    <div className="field"><label className="field-label">₫ / đêm</label>
+                    <div className="field"><label className="field-label">₫ / tháng</label>
                       <input className="input" type="number" {...roomForm.register('price_per_night')} />
                       {roomForm.formState.errors.price_per_night && <small style={{ color: 'var(--danger)' }}>{roomForm.formState.errors.price_per_night.message}</small>}
                     </div>
@@ -397,7 +397,7 @@ export default function AddRoomsScreen() {
                 title={rooms.length === 0 ? 'Thêm ít nhất một phòng trước khi xuất bản' : undefined}
                 onClick={() => navigate('/host/dashboard')}
               >
-                <Icon name="check" size={14} /> {editingHotelId ? 'Xong' : 'Xuất bản chỗ nghỉ'}
+                <Icon name="check" size={14} /> {editingHotelId ? 'Xong' : 'Xuất bản nhà cho thuê'}
               </button>
             </div>
           </div>

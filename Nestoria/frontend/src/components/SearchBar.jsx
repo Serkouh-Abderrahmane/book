@@ -105,7 +105,7 @@ export default function SearchBar({ initial = {}, onSubmit }) {
   const submit = (e) => {
     e?.preventDefault?.();
     if (!location.trim()) {
-      setError('Vui lòng chọn điểm đến trước.');
+      setError('Vui lòng chọn khu vực trước.');
       whereInputRef.current?.focus();
       return;
     }
@@ -133,14 +133,14 @@ export default function SearchBar({ initial = {}, onSubmit }) {
         htmlFor="search-where"
         className={`search-field ${open === 'where' ? 'is-focus' : ''}`}
       >
-        <span className="search-label">Điểm đến</span>
+        <span className="search-label">Khu vực</span>
         <input
           id="search-where"
           ref={whereInputRef}
           type="text"
           autoComplete="off"
           className="search-input"
-          placeholder="Thành phố hoặc khu vực"
+          placeholder="Quận, khu vực hoặc địa danh"
           value={location}
           onChange={(e) => { setLocation(e.target.value); setError(null); }}
         />
@@ -152,7 +152,7 @@ export default function SearchBar({ initial = {}, onSubmit }) {
         className={`search-field search-field-btn ${open === 'dates' ? 'is-focus' : ''}`}
         onClick={() => setOpen(open === 'dates' ? null : 'dates')}
       >
-        <span className="search-label">Nhận phòng</span>
+        <span className="search-label">Ngày nhận</span>
         <span className="search-value">{checkin ? pretty(checkin) : 'Chọn ngày'}</span>
       </button>
 
@@ -161,7 +161,7 @@ export default function SearchBar({ initial = {}, onSubmit }) {
         className={`search-field search-field-btn ${open === 'dates' ? 'is-focus' : ''}`}
         onClick={() => setOpen(open === 'dates' ? null : 'dates')}
       >
-        <span className="search-label">Trả phòng</span>
+        <span className="search-label">Ngày trả</span>
         <span className="search-value">{checkout ? pretty(checkout) : 'Chọn ngày'}</span>
       </button>
 
@@ -171,15 +171,15 @@ export default function SearchBar({ initial = {}, onSubmit }) {
         className={`search-field search-field-btn ${open === 'guests' ? 'is-focus' : ''}`}
         onClick={() => setOpen(open === 'guests' ? null : 'guests')}
       >
-        <span className="search-label">Khách</span>
+        <span className="search-label">Người thuê</span>
         <span className="search-value">
-          {guests} khách <Icon name="chevron-down" size={12} />
+          {guests} người <Icon name="chevron-down" size={12} />
         </span>
       </button>
 
       <button type="submit" className="search-submit">
         <Icon name="search" size={16} />
-        <span>Tìm kiếm</span>
+        <span>Tìm nhà</span>
       </button>
 
       <Popover

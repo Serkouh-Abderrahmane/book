@@ -1,11 +1,15 @@
 import { useEffect, useRef } from 'react';
 
+function hasObserver() {
+  return typeof IntersectionObserver !== 'undefined';
+}
+
 export function useScrollReveal() {
   const ref = useRef(null);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !hasObserver()) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -26,6 +30,7 @@ export function useScrollReveal() {
 
 export function useScrollRevealAll(selector = '.reveal') {
   useEffect(() => {
+    if (!hasObserver()) return;
     const els = document.querySelectorAll(selector);
     if (!els.length) return;
 
@@ -43,5 +48,5 @@ export function useScrollRevealAll(selector = '.reveal') {
 
     els.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  });
+  }, [selector]);
 }

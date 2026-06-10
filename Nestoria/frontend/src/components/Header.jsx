@@ -5,10 +5,10 @@ import ThemeToggle from './ThemeToggle.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
 const LINKS = [
-  { to: '/',          label: 'Lưu trú' },
-  { to: '/hotels',    label: 'Khám phá' },
-  { to: '/journal',   label: 'Tạp chí' },
-  { to: '/about',     label: 'Giới thiệu' },
+  { to: '/home',    label: 'Trang chủ' },
+  { to: '/',        label: 'Nhà cho thuê' },
+  { to: '/about',   label: 'Giới thiệu' },
+  { to: '/contact', label: 'Liên hệ' },
 ];
 
 export default function Header({ theme, setTheme }) {
@@ -29,8 +29,8 @@ export default function Header({ theme, setTheme }) {
     <header className={`header ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="header-inner">
         <div className="header-left">
-          <Link to="/" className="logo" aria-label="Phong Cảnh Việt">
-            <span className="logo-mark">Phong Cảnh Việt</span>
+          <Link to="/home" className="logo" aria-label="Chi Vinh Land">
+            <span className="logo-mark">Chi Vinh Land</span>
           </Link>
         </div>
 
@@ -54,7 +54,7 @@ export default function Header({ theme, setTheme }) {
               </button>
               <button
                 className="btn btn-ghost btn-sm"
-                onClick={() => { logout(); navigate('/'); }}
+                onClick={() => { logout(); navigate('/home'); }}
                 aria-label="Đăng xuất"
               >
                 <Icon name="logout" size={14} />

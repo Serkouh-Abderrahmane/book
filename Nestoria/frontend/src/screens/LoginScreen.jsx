@@ -13,8 +13,8 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 
 const DEMO_ACCOUNTS = {
-  customer: { email: 'demo@example.com', password: 'Demo1234', label: 'Khách du lịch' },
-  host:     { email: 'host@example.com', password: 'Host1234', label: 'Đối tác' },
+  customer: { email: 'demo@example.com', password: 'Demo1234', label: 'Người thuê' },
+  host:     { email: 'host@example.com', password: 'Host1234', label: 'Chủ nhà' },
 };
 
 export default function LoginScreen() {
@@ -67,8 +67,8 @@ export default function LoginScreen() {
       <div className="auth-side">
         <Photo hue="dusk" src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80&auto=format&fit=crop" alt="" />
         <div className="auth-quote">
-          <span className="eyebrow" style={{ color: 'white', opacity: 0.85 }}>— Từ tạp chí</span>
-          <h2 className="h-2 mt-4" style={{ color: 'white' }}>"Những chỗ nghỉ tuyệt nhất không bán cho bạn điều gì. Họ chỉ trao chìa khóa và biến mất."</h2>
+          <span className="eyebrow" style={{ color: 'white', opacity: 0.85 }}>— Chi Vinh Land</span>
+          <h2 className="h-2 mt-4" style={{ color: 'white' }}>"Ngôi nhà tốt nhất là nơi bạn cảm thấy mình thuộc về."</h2>
           <span className="text-mono" style={{ opacity: 0.75, fontSize: 12 }}>— Riya B., về The Marigold House</span>
         </div>
       </div>
@@ -76,7 +76,7 @@ export default function LoginScreen() {
       <div className="auth-form-wrap">
         <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>
           <span className="eyebrow">— {mode === 'login' ? 'Chào mừng trở lại' : 'Tạo tài khoản'}</span>
-          <h1 className="h-2 mt-2 mb-6">{mode === 'login' ? 'Đăng nhập vào Phong Cảnh Việt.' : 'Hai phút, sau đó bạn có thể lên kế hoạch.'}</h1>
+          <h1 className="h-2 mt-2 mb-6">{mode === 'login' ? 'Đăng nhập vào Chi Vinh Land.' : 'Tạo tài khoản người thuê hoặc chủ nhà.'}</h1>
 
           <div className="auth-tabs">
             <button type="button" className={`auth-tab ${mode==='login' ? 'is-active' : ''}`}  onClick={() => { setMode('login');  setErr(null); }}>Đăng nhập</button>
@@ -84,8 +84,8 @@ export default function LoginScreen() {
           </div>
 
           <div className="role-toggle">
-            <button type="button" className={role==='customer' ? 'is-active' : ''} onClick={() => { setRole('customer'); setErr(null); }}>Tôi đi du lịch</button>
-            <button type="button" className={role==='host'     ? 'is-active' : ''} onClick={() => { setRole('host'); setErr(null); }}>Tôi cho thuê</button>
+<button type="button" className={role==='customer' ? 'is-active' : ''} onClick={() => { setRole('customer'); setErr(null); }}>Tôi thuê nhà</button>
+          <button type="button" className={role==='host' ? 'is-active' : ''} onClick={() => { setRole('host'); setErr(null); }}>Tôi cho thuê</button>
           </div>
 
           {mode === 'signup' && (

@@ -45,6 +45,14 @@ export default function Icon({ name, size = 18, stroke = 1.6, ...props }) {
     case 'logout':       return (<svg {...common}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>);
     case 'compass':      return (<svg {...common}><circle cx="12" cy="12" r="9"/><path d="m15 9-3 6-3-3 6-3Z"/></svg>);
     case 'sparkle':      return (<svg {...common}><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.5 5.5l2.5 2.5M16 16l2.5 2.5M16 8l2.5-2.5M5.5 18.5 8 16"/></svg>);
+    case 'home':         return (<svg {...common}><path d="M21 20V9.5l-9-7-9 7V20a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1Z"/><path d="M9 21V12h6v9"/></svg>);
+    case 'maximize':     return (<svg {...common}><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>);
+    case 'bed':          return (<svg {...common}><path d="M2 14v6h20v-6M2 14V8a2 2 0 0 1 2-2h7v8M2 14h20"/><path d="M13 6h5a2 2 0 0 1 2 2v6"/><path d="M2 20h20"/></svg>);
+    case 'map':          return (<svg {...common}><path d="M22 3v13l-7 4-7-4-5 4V3l5-4 7 4 7-4Z"/><path d="M15 7v11M8 3v11"/></svg>);
+    case 'grid':         return (<svg {...common}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>);
+    case 'wind':         return (<svg {...common}><path d="M9.5 4.5A2.5 2.5 0 0 1 12 2a2.5 2.5 0 0 1 2.5 2.5v1M9.5 19.5A2.5 2.5 0 0 0 12 22a2.5 2.5 0 0 0 2.5-2.5v-1M5 12h14"/><path d="M4.5 9.5A2.5 2.5 0 0 1 7 7a2.5 2.5 0 0 1 2.5 2.5v1M19.5 14.5A2.5 2.5 0 0 1 17 17a2.5 2.5 0 0 1-2.5-2.5v-1"/></svg>);
+    case 'rotate':       return (<svg {...common}><path d="M21 12a9 9 0 0 1-9 9 8.98 8.98 0 0 1-6.36-2.64L3 16"/><path d="M3 12a9 9 0 0 1 9-9 8.98 8.98 0 0 1 6.36 2.64L21 8"/><path d="M3 9v3h3M18 12h3"/></svg>);
+    case 'more-horiz':   return (<svg {...common}><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>);
     case 'google':       return (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <path d="M22.5 12.27c0-.83-.07-1.62-.21-2.39H12v4.51h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.75h3.58c2.09-1.93 3.21-4.77 3.21-8.18Z" fill="#4285F4"/>

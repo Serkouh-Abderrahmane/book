@@ -4,35 +4,35 @@ import { usePageTitle } from '../hooks/usePageTitle.js';
 const TERMS = [
   {
     h: '1. Chấp nhận',
-    p: 'Khi sử dụng Phong Cảnh Việt, bạn đồng ý với các điều khoản này. Nếu không đồng ý, vui lòng không sử dụng nền tảng. Chúng tôi có thể cập nhật các điều khoản này; ngày ở cuối trang cho biết lần sửa đổi gần nhất.',
+    p: 'Khi sử dụng Chi Vinh Land, bạn đồng ý với các điều khoản này. Nếu không đồng ý, vui lòng không sử dụng nền tảng. Chúng tôi có thể cập nhật các điều khoản này; ngày ở cuối trang cho biết lần sửa đổi gần nhất.',
   },
   {
     h: '2. Tài khoản',
-    p: 'Bạn chịu trách nhiệm bảo mật tài khoản và mật khẩu. Bạn phải đủ 18 tuổi trở lên để đặt phòng. Chúng tôi có thể đình chỉ hoặc chấm dứt tài khoản lạm dụng nền tảng hoặc vi phạm các điều khoản này.',
+    p: 'Bạn chịu trách nhiệm bảo mật tài khoản và mật khẩu. Bạn phải đủ 18 tuổi trở lên để thuê nhà. Chúng tôi có thể đình chỉ hoặc chấm dứt tài khoản lạm dụng nền tảng hoặc vi phạm các điều khoản này.',
   },
   {
-    h: '3. Đặt phòng',
-    p: 'Việc đặt phòng là hợp đồng giữa bạn và chủ chỗ nghỉ. Phong Cảnh Việt hỗ trợ đặt phòng và thanh toán nhưng không phải là bên trong thời gian lưu trú. Giá hiển thị đã bao gồm thuế; chủ chỗ nghỉ nhận được tổng tiền sau khi trừ phí nền tảng 10% của chúng tôi.',
+    h: '3. Thuê nhà',
+    p: 'Việc thuê nhà là hợp đồng giữa bạn và chủ nhà. Chi Vinh Land hỗ trợ yêu cầu thuê và thanh toán nhưng không phải là bên trong thời gian thuê. Giá hiển thị đã bao gồm thuế; chủ nhà nhận được tổng tiền sau khi trừ phí nền tảng 10% của chúng tôi.',
   },
   {
     h: '4. Hủy và hoàn tiền',
-    p: 'Hủy miễn phí trong vòng 48 giờ trước khi nhận phòng. Trong vòng 48 giờ, đêm đầu tiên sẽ bị tính phí. Sau khi nhận phòng, sẽ không hoàn tiền. Chủ chỗ nghỉ có thể cấp tín dụng theo quyết định của họ. Tiền hoàn được xử lý về phương thức thanh toán ban đầu trong vòng 7 ngày làm việc.',
+    p: 'Hủy miễn phí trong vòng 48 giờ trước khi nhận nhà. Trong vòng 48 giờ, tháng đầu tiên sẽ bị tính phí. Sau khi nhận nhà, sẽ không hoàn tiền. Chủ nhà có thể cấp tín dụng theo quyết định của họ. Tiền hoàn được xử lý về phương thức thanh toán ban đầu trong vòng 7 ngày làm việc.',
   },
   {
-    h: '5. Trách nhiệm của chủ chỗ nghỉ',
-    p: 'Chủ chỗ nghỉ cam đoan rằng danh sách của họ là chính xác, họ có thẩm quyền pháp lý để cho thuê chỗ nghỉ và sẽ tôn trọng các đặt phòng đã xác nhận. Việc hủy nhiều lần bởi chủ chỗ nghỉ có thể dẫn đến việc bị gỡ danh sách.',
+    h: '5. Trách nhiệm của chủ nhà',
+    p: 'Chủ nhà cam đoan rằng danh sách của họ là chính xác, họ có thẩm quyền pháp lý để cho thuê nhà và sẽ tôn trọng các yêu cầu thuê đã xác nhận. Việc hủy nhiều lần bởi chủ nhà có thể dẫn đến việc bị gỡ danh sách.',
   },
   {
     h: '6. Hành vi',
-    p: 'Khách đồng ý đối xử với chỗ nghỉ một cách cẩn thận và tôn trọng nội quy. Thiệt hại có thể được tính cho khách theo quyết định hợp lý của chủ chỗ nghỉ. Quấy rối chủ chỗ nghỉ hoặc khách khác là căn cứ để bị xóa khỏi nền tảng vĩnh viễn.',
+    p: 'Người thuê đồng ý đối xử với nhà cho thuê một cách cẩn thận và tôn trọng nội quy. Thiệt hại có thể được tính cho người thuê theo quyết định hợp lý của chủ nhà. Quấy rối chủ nhà hoặc người thuê khác là căn cứ để bị xóa khỏi nền tảng vĩnh viễn.',
   },
   {
     h: '7. Sở hữu trí tuệ',
-    p: 'Tất cả nội dung mang thương hiệu Phong Cảnh Việt — bao gồm ảnh chụp, minh họa và bài biên tập — thuộc sở hữu của Phong Cảnh Việt hoặc các đối tác nội dung. Bạn có thể chia sẻ liên kết đến danh sách; vui lòng không sao chép nội dung khi chưa được phép.',
+    p: 'Tất cả nội dung mang thương hiệu Chi Vinh Land — bao gồm ảnh chụp, minh họa và bài biên tập — thuộc sở hữu của Chi Vinh Land hoặc các đối tác nội dung. Bạn có thể chia sẻ liên kết đến danh sách; vui lòng không sao chép nội dung khi chưa được phép.',
   },
   {
     h: '8. Giới hạn trách nhiệm',
-    p: 'Phong Cảnh Việt không chịu trách nhiệm về thiệt hại phát sinh từ hành vi của chủ chỗ nghỉ, khách hoặc bên thứ ba. Trách nhiệm tối đa của chúng tôi cho bất kỳ khiếu nại nào được giới hạn trong tổng số tiền bạn đã thanh toán cho đặt phòng phát sinh khiếu nại.',
+    p: 'Chi Vinh Land không chịu trách nhiệm về thiệt hại phát sinh từ hành vi của chủ nhà, người thuê hoặc bên thứ ba. Trách nhiệm tối đa của chúng tôi cho bất kỳ khiếu nại nào được giới hạn trong tổng số tiền bạn đã thanh toán cho hợp đồng thuê phát sinh khiếu nại.',
   },
   {
     h: '9. Luật điều chỉnh',
@@ -40,18 +40,18 @@ const TERMS = [
   },
   {
     h: '10. Liên hệ',
-    p: 'Thắc mắc về các điều khoản này? Gửi thư đến phaply@phongcanhviet.example.',
+    p: 'Thắc mắc về các điều khoản này? Gửi thư đến phaply@chivinhland.example.',
   },
 ];
 
 const PRIVACY = [
   {
     h: 'Chúng tôi thu thập gì',
-    p: 'Thông tin tài khoản (tên, email, điện thoại, mật khẩu đã mã hóa), lịch sử đặt phòng, chi tiết hồ sơ bạn chọn thêm và dữ liệu sử dụng cơ bản — trang đã truy cập, truy vấn tìm kiếm, địa chỉ IP, trình duyệt. Chúng tôi không chạy phân tích của bên thứ ba hoặc tập lệnh quảng cáo.',
+    p: 'Thông tin tài khoản (tên, email, điện thoại, mật khẩu đã mã hóa), lịch sử thuê nhà, chi tiết hồ sơ bạn chọn thêm và dữ liệu sử dụng cơ bản — trang đã truy cập, truy vấn tìm kiếm, địa chỉ IP, trình duyệt. Chúng tôi không chạy phân tích của bên thứ ba hoặc tập lệnh quảng cáo.',
   },
   {
     h: 'Cách chúng tôi sử dụng',
-    p: 'Để xử lý đặt phòng, gửi xác nhận, hỗ trợ bạn khi liên hệ, ngăn gian lận và cải thiện nền tảng. Chúng tôi không bao giờ bán dữ liệu của bạn. Chúng tôi không bao giờ dùng dữ liệu của bạn để huấn luyện AI. Chúng tôi không bao giờ chia sẻ dữ liệu nhận dạng của bạn với chủ chỗ nghỉ ngoài những gì họ cần để phục vụ bạn.',
+    p: 'Để xử lý yêu cầu thuê, gửi xác nhận, hỗ trợ bạn khi liên hệ, ngăn gian lận và cải thiện nền tảng. Chúng tôi không bao giờ bán dữ liệu của bạn. Chúng tôi không bao giờ dùng dữ liệu của bạn để huấn luyện AI. Chúng tôi không bao giờ chia sẻ dữ liệu nhận dạng của bạn với chủ nhà ngoài những gì họ cần để phục vụ bạn.',
   },
   {
     h: 'Cookie',
@@ -63,11 +63,11 @@ const PRIVACY = [
   },
   {
     h: 'Thời gian lưu trữ',
-    p: 'Dữ liệu tài khoản được lưu trong suốt thời gian tài khoản hoạt động. Hồ sơ đặt phòng trong 7 năm (theo yêu cầu thuế). Tin nhắn biểu mẫu liên hệ trong 1 năm. Bạn có thể yêu cầu xóa sớm hơn bằng cách viết thư cho chúng tôi.',
+    p: 'Dữ liệu tài khoản được lưu trong suốt thời gian tài khoản hoạt động. Hồ sơ thuê nhà trong 7 năm (theo yêu cầu thuế). Tin nhắn biểu mẫu liên hệ trong 1 năm. Bạn có thể yêu cầu xóa sớm hơn bằng cách viết thư cho chúng tôi.',
   },
   {
     h: 'Quyền của bạn',
-    p: 'Bạn có thể truy cập, chỉnh sửa hoặc xóa dữ liệu của mình bất kỳ lúc nào. Gửi email đến baomat@phongcanhviet.example và chúng tôi sẽ trả lời trong vòng 7 ngày. Chúng tôi sẽ không tính phí khi bạn thực hiện các quyền này.',
+    p: 'Bạn có thể truy cập, chỉnh sửa hoặc xóa dữ liệu của mình bất kỳ lúc nào. Gửi email đến baomat@chivinhland.example và chúng tôi sẽ trả lời trong vòng 7 ngày. Chúng tôi sẽ không tính phí khi bạn thực hiện các quyền này.',
   },
   {
     h: 'Bảo mật',
@@ -75,7 +75,7 @@ const PRIVACY = [
   },
   {
     h: 'Trẻ em',
-    p: 'Phong Cảnh Việt không hướng đến trẻ em dưới 18 tuổi. Chúng tôi không cố ý thu thập dữ liệu từ trẻ vị thành niên.',
+    p: 'Chi Vinh Land không hướng đến trẻ em dưới 18 tuổi. Chúng tôi không cố ý thu thập dữ liệu từ trẻ vị thành niên.',
   },
   {
     h: 'Cập nhật',
@@ -83,7 +83,7 @@ const PRIVACY = [
   },
   {
     h: 'Liên hệ',
-    p: 'Thắc mắc về quyền riêng tư gửi đến baomat@phongcanhviet.example.',
+    p: 'Thắc mắc về quyền riêng tư gửi đến baomat@chivinhland.example.',
   },
 ];
 

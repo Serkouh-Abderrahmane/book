@@ -42,11 +42,11 @@ function RevenueChart({ months }) {
 }
 
 function BookingsTable({ bookings }) {
-  if (!bookings.length) return <p className="text-muted" style={{ padding: 20 }}>Chưa có đặt phòng.</p>;
+  if (!bookings.length) return <p className="text-muted" style={{ padding: 20 }}>Chưa có yêu cầu thuê.</p>;
   return (
     <div className="bookings-table">
       <div className="bookings-row bookings-head">
-        <div>Khách</div><div>Chỗ nghỉ · Phòng</div><div>Ngày</div><div>Trạng thái</div><div style={{ textAlign: 'right' }}>Tổng</div>
+        <div>Người thuê</div><div>Nhà · Loại</div><div>Ngày</div><div>Trạng thái</div><div style={{ textAlign: 'right' }}>Tổng</div>
       </div>
       {bookings.map((b) => (
         <div className="bookings-row" key={b.id}>
@@ -54,12 +54,12 @@ function BookingsTable({ bookings }) {
             <span className="avatar" style={{ width: 32, height: 32, fontSize: 13 }}>{(b.guest_name || '·')[0]}</span>
             <div>
               <div style={{ fontSize: 14 }}>{b.guest_name}</div>
-              <div className="text-muted text-mono" style={{ fontSize: 11 }}>PCV-{String(b.id).padStart(6,'0')}</div>
+              <div className="text-muted text-mono" style={{ fontSize: 11 }}>CVL-{String(b.id).padStart(6,'0')}</div>
             </div>
           </div>
           <div>
             <div style={{ fontSize: 13 }}>{b.hotel_name}</div>
-            <div className="text-muted" style={{ fontSize: 12 }}>{b.room_type} · {b.guests} khách</div>
+            <div className="text-muted" style={{ fontSize: 12 }}>{b.room_type} · {b.guests} người</div>
           </div>
           <div className="text-mono" style={{ fontSize: 12 }}>
             <div>{new Date(b.checkin_date).toLocaleDateString('vi-VN', { day: '2-digit', month: 'short' })}</div>
@@ -79,7 +79,7 @@ export default function HostScreen({ tab: initialTab }) {
   const qc = useQueryClient();
   const { user, setUser } = useAuth();
   const [tab, setTab] = useState(params.get('tab') || initialTab || 'overview');
-  usePageTitle('Quản lý chỗ nghỉ');
+  usePageTitle('Quản lý nhà cho thuê');
 
   useEffect(() => {
     const next = params.get('tab') || initialTab || 'overview';
@@ -95,13 +95,15 @@ export default function HostScreen({ tab: initialTab }) {
 
   useScrollRevealAll('.reveal');
 
+  const anyError = propertiesQ.isError || statsQ.isError || bookingsQ.isError || earningsQ.isError;
+
   const stats = statsQ.data || { revenue: 0, revenue_delta: 0, bookings: 0, bookings_delta: 0, rating: 0, rating_delta: 0, occupancy: 0 };
   const properties = propertiesQ.data || [];
   const upcoming = (bookingsQ.data || []).filter((b) => b.status === 'confirmed' || b.status === 'pending').slice(0, 8);
 
   const KPI = [
     { label: 'Doanh thu (T)', value: `${(stats.revenue/100000).toFixed(2)}tr`, delta: stats.revenue_delta, icon: 'sparkle' },
-    { label: 'Đặt phòng',    value: stats.bookings,                            delta: stats.bookings_delta, icon: 'calendar' },
+    { label: 'Yêu cầu thuê',  value: stats.bookings,                            delta: stats.bookings_delta, icon: 'calendar' },
     { label: 'Công suất',    value: `${stats.occupancy}%`,                     delta: stats.occupancy_delta, icon: 'compass' },
     { label: 'Đánh giá TB',  value: Number(stats.rating).toFixed(2),           delta: stats.rating_delta, icon: 'star' },
   ];
@@ -123,10 +125,22 @@ export default function HostScreen({ tab: initialTab }) {
             onClick={() => navigate(user?.onboarded === false ? '/host/profile' : '/host/add-rooms')}
             title={user?.onboarded === false ? 'Complete your profile first' : undefined}
           >
-            <Icon name="plus" size={14} /> Thêm chỗ nghỉ
+            <Icon name="plus" size={14} /> Thêm nhà cho thuê
           </button>
         </div>
       </div>
+
+      {anyError && (
+        <div className="card" style={{ padding: 16, marginBottom: 24, borderColor: '#EF4444', background: '#FEF2F2' }}>
+          <div className="row" style={{ gap: 8, alignItems: 'center' }}>
+            <span style={{ color: '#EF4444', fontSize: 13 }}>Không thể tải dữ liệu từ máy chủ. Một số thông tin có thể không chính xác.</span>
+            <button className="btn btn-sm" style={{ background: '#EF4444', color: '#fff', border: 0, borderRadius: 8, padding: '6px 16px', cursor: 'pointer', marginLeft: 'auto' }}
+                    onClick={() => { propertiesQ.refetch(); statsQ.refetch(); bookingsQ.refetch(); earningsQ.refetch(); profileQ.refetch(); }}>
+              Thử lại
+            </button>
+          </div>
+        </div>
+      )}
 
       {user?.onboarded === false && (
         <div className="card reveal" style={{ padding: 20, marginBottom: 24, borderColor: 'color-mix(in oklab, var(--accent) 30%, var(--line))', background: 'color-mix(in oklab, var(--accent) 6%, var(--bg-elev))' }}>
@@ -156,7 +170,7 @@ export default function HostScreen({ tab: initialTab }) {
       </div>
 
       <div className="tabs-bar">
-        {[['overview','Tổng quan'],['properties','Chỗ nghỉ'],['bookings','Đặt phòng'],['earnings','Doanh thu'],['profile','Hồ sơ']].map(([k,l]) => (
+        {[['overview','Tổng quan'],['properties','Nhà cho thuê'],['bookings','Yêu cầu thuê'],['earnings','Doanh thu'],['profile','Hồ sơ']].map(([k,l]) => (
           <button key={k} className={tab === k ? 'is-active' : ''} onClick={() => { setTab(k); setParams({ tab: k }, { replace: true }); }}>{l}</button>
         ))}
       </div>
@@ -195,7 +209,7 @@ export default function HostScreen({ tab: initialTab }) {
             <div className="row" style={{ justifyContent: 'space-between', marginBottom: 24 }}>
               <div>
                 <span className="eyebrow">— Sắp đến</span>
-                <div className="h-2 mt-2">{upcoming.length} khách tháng này</div>
+                <div className="h-2 mt-2">{upcoming.length} người thuê tháng này</div>
               </div>
               <button className="btn btn-ghost btn-sm" onClick={() => setTab('bookings')}>Xem tất cả <Icon name="arrow-right" size={12} /></button>
             </div>
@@ -237,7 +251,7 @@ export default function HostScreen({ tab: initialTab }) {
           <button className="card" style={{ padding: 36, textAlign: 'center', border: '1px dashed var(--line-strong)', cursor: 'pointer' }}
                   onClick={() => navigate('/host/add-rooms')}>
             <Icon name="plus" size={20} />
-            <div className="h-3 mt-3">Niêm yết chỗ nghỉ mới</div>
+            <div className="h-3 mt-3">Niêm yết nhà cho thuê mới</div>
             <p className="text-muted mt-2" style={{ fontSize: 13 }}>Hoàn tất đăng ký trong khoảng 8 phút.</p>
           </button>
         </div>
@@ -259,7 +273,7 @@ export default function HostScreen({ tab: initialTab }) {
               <div className="h-1 mt-2">
                 {((earningsQ.data?.monthly || []).reduce((a, m) => a + Number(m.revenue), 0) / 100000).toFixed(2)}tr
               </div>
-              <p className="text-muted mt-2">{properties.length} chỗ nghỉ</p>
+              <p className="text-muted mt-2">{properties.length} nhà cho thuê</p>
             </div>
             <div className="card" style={{ padding: 28 }}>
               <span className="eyebrow">— Kỳ thanh toán tới</span>
@@ -275,7 +289,7 @@ export default function HostScreen({ tab: initialTab }) {
               {(earningsQ.data?.transactions || []).map((t, i, arr) => (
                 <div key={t.id} className="row" style={{ justifyContent: 'space-between', padding: '14px 0', borderBottom: i < arr.length - 1 ? '1px solid var(--line)' : 'none' }}>
                   <div>
-                    <div style={{ fontSize: 14 }}>PCV-{String(t.id).padStart(6, '0')}</div>
+                    <div style={{ fontSize: 14 }}>CVL-{String(t.id).padStart(6, '0')}</div>
                     <div className="text-muted" style={{ fontSize: 12 }}>{t.guest_name} · {t.hotel_name}</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
@@ -328,7 +342,7 @@ function HostProfileTab({ profile, onSaved }) {
           </div>
           <div className="field">
             <label className="field-label">Doanh nghiệp / thương hiệu <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <input className="input" placeholder="Ví dụ: Khách sạn Biển Xanh" {...register('business_name')} />
+            <input className="input" placeholder="Ví dụ: Nhà cho thuê Biển Xanh" {...register('business_name')} />
             {errors.business_name && <small style={{ color: 'var(--danger)' }}>{errors.business_name.message}</small>}
           </div>
           <div className="field">

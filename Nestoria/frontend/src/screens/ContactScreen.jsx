@@ -29,7 +29,7 @@ export default function ContactScreen() {
         <div className="eyebrow mb-3">— Liên hệ</div>
         <h1 className="h-1" style={{ maxWidth: 720 }}>Gửi lời chào.</h1>
         <p className="section-sub mt-3" style={{ maxWidth: 540, fontSize: 16 }}>
-          Thắc mắc về đặt phòng, chỗ nghỉ hoặc hợp tác — chúng tôi thường trả lời trong vòng một ngày.
+          Thắc mắc về thuê nhà, nhà cho thuê hoặc hợp tác — chúng tôi thường trả lời trong vòng một ngày.
         </p>
       </div>
 
@@ -38,18 +38,18 @@ export default function ContactScreen() {
         <aside className="stack" style={{ '--gap': '16px', alignSelf: 'start' }}>
           <div className="card" style={{ padding: 24 }}>
             <div className="eyebrow mb-2">— Email</div>
-            <a href="mailto:hello@phongcanhviet.example" style={{ fontSize: 22, borderBottom: '1px solid var(--line-strong)' }}>
-              hello@phongcanhviet.example
+            <a href="mailto:hello@chivinhland.example" style={{ fontSize: 22, borderBottom: '1px solid var(--line-strong)' }}>
+              hello@chivinhland.example
             </a>
-            <p className="text-muted mt-3" style={{ fontSize: 13 }}>Đặt phòng, hỗ trợ và thắc mắc chung. Phản hồi trong vòng 24 giờ.</p>
+            <p className="text-muted mt-3" style={{ fontSize: 13 }}>Thuê nhà, hỗ trợ và thắc mắc chung. Phản hồi trong vòng 24 giờ.</p>
           </div>
 
           <div className="card" style={{ padding: 24 }}>
-            <div className="eyebrow mb-2">— Đối tác</div>
-            <a href="mailto:doitac@phongcanhviet.example" style={{ fontSize: 22, borderBottom: '1px solid var(--line-strong)' }}>
-              doitac@phongcanhviet.example
+            <div className="eyebrow mb-2">— Chủ nhà</div>
+            <a href="mailto:chunha@chivinhland.example" style={{ fontSize: 22, borderBottom: '1px solid var(--line-strong)' }}>
+              chunha@chivinhland.example
             </a>
-            <p className="text-muted mt-3" style={{ fontSize: 13 }}>Để niêm yết chỗ nghỉ hoặc liên hệ bộ phận đối tác.</p>
+            <p className="text-muted mt-3" style={{ fontSize: 13 }}>Để niêm yết nhà cho thuê hoặc liên hệ bộ phận chủ nhà.</p>
           </div>
 
           <div className="card" style={{ padding: 24 }}>
@@ -61,7 +61,7 @@ export default function ContactScreen() {
           <div className="card" style={{ padding: 24, background: 'var(--bg-inset)' }}>
             <div className="eyebrow mb-2">— Văn phòng</div>
             <div style={{ fontSize: 18, lineHeight: 1.35 }}>
-              Phong Cảnh Việt<br/>
+              Chi Vinh Land<br/>
               Quận 1 · Thành phố Hồ Chí Minh<br/>
               Việt Nam
             </div>
@@ -98,9 +98,9 @@ export default function ContactScreen() {
                 <label className="field-label">Chủ đề</label>
                 <select className="select" {...register('subject')}>
                   <option value="">Chọn…</option>
-                  <option value="booking">Thắc mắc về đặt phòng</option>
-                  <option value="property">Câu hỏi về chỗ nghỉ</option>
-                  <option value="hosting">Tôi muốn niêm yết chỗ nghỉ</option>
+                  <option value="booking">Thắc mắc về thuê nhà</option>
+                  <option value="property">Câu hỏi về nhà cho thuê</option>
+                  <option value="hosting">Tôi muốn niêm yết nhà cho thuê</option>
                   <option value="press">Báo chí / hợp tác</option>
                   <option value="other">Vấn đề khác</option>
                 </select>

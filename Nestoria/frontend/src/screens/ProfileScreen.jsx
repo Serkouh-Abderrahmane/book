@@ -44,6 +44,7 @@ export default function ProfileScreen() {
     defaultValues: { full_name: user?.full_name, phone: user?.phone || '', dob: '', gender: '' },
   });
 
+  const anyError = profileQ.isError || bookingsQ.isError;
   const me = profileQ.data || user || { full_name: '—', email: '—' };
   const bookings = bookingsQ.data || [];
   const filtered = bookings.filter((b) => {
@@ -67,11 +68,23 @@ export default function ProfileScreen() {
           </div>
         </div>
         <div className="profile-stats">
-          <div><div style={{ fontSize: 32 }}>{bookings.length}</div><div className="eyebrow mt-2">Chỗ nghỉ</div></div>
+          <div><div style={{ fontSize: 32 }}>{bookings.length}</div><div className="eyebrow mt-2">Nhà đã thuê</div></div>
           <div><div style={{ fontSize: 32 }}>{bookings.filter((b) => b.status === 'completed').length}</div><div className="eyebrow mt-2">Đã hoàn tất</div></div>
           <div><div style={{ fontSize: 32 }}>{bookings.filter((b) => b.status === 'confirmed').length}</div><div className="eyebrow mt-2">Sắp tới</div></div>
         </div>
       </div>
+
+      {anyError && (
+        <div className="card" style={{ padding: 16, marginBottom: 16, borderColor: '#EF4444', background: '#FEF2F2' }}>
+          <div className="row" style={{ gap: 8, alignItems: 'center' }}>
+            <span style={{ color: '#EF4444', fontSize: 13 }}>Không thể tải dữ liệu từ máy chủ.</span>
+            <button className="btn btn-sm" style={{ background: '#EF4444', color: '#fff', border: 0, borderRadius: 8, padding: '6px 16px', cursor: 'pointer', marginLeft: 'auto' }}
+                    onClick={() => { profileQ.refetch(); bookingsQ.refetch(); }}>
+              Thử lại
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="tabs-bar">
         {[['upcoming','Sắp tới'],['past','Đã qua'],['cancelled','Đã hủy'],['profile','Tài khoản']].map(([k,l]) => (
@@ -85,9 +98,9 @@ export default function ProfileScreen() {
           : filtered.length === 0 ? (
             <div className="card" style={{ padding: 48, textAlign: 'center' }}>
               <Icon name="compass" size={32} />
-              <div className="h-3" style={{ fontSize: 24 }}>Chưa có chỗ nghỉ {tab === 'upcoming' ? 'sắp tới' : tab === 'past' ? 'đã qua' : 'đã hủy'}.</div>
-              <p className="text-muted mt-2">Đã đến lúc lên kế hoạch cho chuyến đi mới?</p>
-              <button className="btn btn-primary mt-4" onClick={() => navigate('/hotels')}>Tìm chỗ nghỉ</button>
+<div className="h-3" style={{ fontSize: 24 }}>Chưa có nhà {tab === 'upcoming' ? 'sắp tới' : tab === 'past' ? 'đã qua' : 'đã hủy'}.</div>
+          <p className="text-muted mt-2">Tìm ngôi nhà phù hợp với bạn?</p>
+          <button className="btn btn-primary mt-4" onClick={() => navigate('/hotels')}>Tìm nhà</button>
             </div>
           ) : filtered.map((b) => (
             <div className="booking-row fade-up" key={b.id}>
@@ -102,7 +115,7 @@ export default function ProfileScreen() {
                     {' → '}
                     {new Date(b.checkout_date).toLocaleDateString('vi-VN', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </span>
-                  <span className="text-mono" style={{ fontSize: 12, color: 'var(--ink-3)' }}>{b.guests} khách</span>
+                  <span className="text-mono" style={{ fontSize: 12, color: 'var(--ink-3)' }}>{b.guests} người</span>
                   <span className="text-mono" style={{ fontSize: 12, color: 'var(--ink-3)' }}>PCV-{String(b.id).padStart(6,'0')}</span>
                 </div>
               </div>
@@ -117,7 +130,7 @@ export default function ProfileScreen() {
                 )}
                 {(statusKey(b.status) === 'upcoming' || statusKey(b.status) === 'confirmed') && (
                   <button className="btn btn-ghost btn-sm" disabled={cancelMut.isPending}
-                          onClick={() => { if (confirm('Hủy đặt phòng này?')) cancelMut.mutate(b.id); }}>
+                          onClick={() => { if (confirm('Hủy yêu cầu thuê này?')) cancelMut.mutate(b.id); }}>
                     {cancelMut.isPending ? '…' : 'Hủy'}
                   </button>
                 )}

@@ -1,41 +1,37 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { createPortal } from 'react-dom';
 
-import HotelCard from '../components/HotelCard.jsx';
+import RoomCard from '../components/RoomCard.jsx';
 import SearchBar from '../components/SearchBar.jsx';
 import Icon from '../components/Icon.jsx';
-import Stepper from '../components/Stepper.jsx';
+import FilterBar from '../components/FilterBar.jsx';
 import { hotelsAPI } from '../lib/api.js';
 import { useSavedHotels } from '../hooks/useSavedHotels.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 import { useAuth } from '../context/AuthContext.jsx';
-
-const AMENITY_OPTIONS = [
-  { key: 'wifi', label: 'Wi-Fi tốc độ cao' },
-  { key: 'pool', label: 'Hồ bơi nước mặn' },
-  { key: 'spa', label: 'Spa & chăm sóc sức khỏe' },
-  { key: 'utensils', label: 'Nhà hàng & quầy bar' },
-  { key: 'car', label: 'Đưa đón sân bay' },
-  { key: 'concierge', label: 'Lễ tân 24/7' },
-];
-
-const DEFAULT_FILTERS = { minPrice: 0, maxPrice: 30000, minRating: 0, regions: [], amenities: [] };
+import { useFilters } from '../hooks/useFilters.js';
 
 export default function HotelsScreen() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
+  const routerLocation = useLocation();
+  const { user } = useAuth();
+  const { isSaved, toggle: toggleSave } = useSavedHotels();
+  usePageTitle('Tìm nhà');
+
+  const { filters, activeFilterCount, resetFilters } = useFilters();
+
   const location = params.get('location') || '';
-  const [filters, setFilters] = useState(DEFAULT_FILTERS);
+
   const [sort, setSort] = useState(params.get('sort') || 'score');
   const [filtersOpen, setFiltersOpen] = useState(false);
-  usePageTitle('Khám phá');
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   useEffect(() => {
     const next = params.get('sort') || 'score';
     if (next !== sort) setSort(next);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   // Body-scroll lock + Escape close for the mobile filter drawer.
@@ -56,9 +52,6 @@ export default function HotelsScreen() {
     next.set('sort', k);
     setParams(next, { replace: true });
   };
-  const { isSaved, toggle: toggleSave } = useSavedHotels();
-  const { user } = useAuth();
-  const routerLocation = useLocation();
   const onSave = (id) => {
     if (!user) {
       navigate(`/login?next=${encodeURIComponent(routerLocation.pathname + routerLocation.search)}`);
@@ -66,151 +59,87 @@ export default function HotelsScreen() {
     }
     toggleSave(id);
   };
-  const [showSearch, setShowSearch] = useState(false);
 
   const apiParams = {
     location: location || undefined,
-    min_price: filters.minPrice || undefined,
-    max_price: filters.maxPrice || undefined,
+    min_price: filters.minPrice > 0 ? filters.minPrice : undefined,
+    max_price: filters.maxPrice < 30000 ? filters.maxPrice : undefined,
     min_rating: filters.minRating || undefined,
     sort,
   };
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['hotels', apiParams],
     queryFn: () => hotelsAPI.search(apiParams).then((d) => d.hotels),
   });
 
-  const regions = useMemo(
-    () => Array.from(new Set((data || []).map((h) => h.region).filter(Boolean))),
-    [data]
-  );
-
   const filtered = useMemo(() => {
     if (!data) return [];
     return data.filter((h) => {
-      if (filters.regions.length && !filters.regions.includes(h.region)) return false;
-      if (filters.amenities.length) {
-        const keys = new Set((h.amenities || []).map((a) => a.key));
-        if (!filters.amenities.every((a) => keys.has(a))) return false;
-      }
+      if (filters.district && h.region !== filters.district) return false;
       return true;
     });
-  }, [data, filters.regions, filters.amenities]);
-
-  const toggleSet = (key, val) => setFilters((f) => {
-    const arr = f[key].includes(val) ? f[key].filter((x) => x !== val) : [...f[key], val];
-    return { ...f, [key]: arr };
-  });
+  }, [data, filters.district]);
 
   const onSearch = (q) => {
     const next = new URLSearchParams();
     if (q.location) next.set('location', q.location);
-    if (q.checkin)  next.set('checkin',  q.checkin);
-    if (q.checkout) next.set('checkout', q.checkout);
-    if (q.guests)   next.set('guests',   q.guests);
     setParams(next);
-    setShowSearch(false);
   };
 
-  const activeFilterCount =
-    (filters.regions?.length || 0) +
-    (filters.amenities?.length || 0) +
-    (filters.minRating > 0 ? 1 : 0) +
-    (filters.minPrice > 0 ? 1 : 0) +
-    (filters.maxPrice < 30000 ? 1 : 0);
-
-  const FiltersBody = (
-    <>
-      <div className="filter-block">
-        <div className="filter-title">Khoảng giá</div>
-        <div className="stack" style={{ '--gap': '10px' }}>
-          <Stepper
-            label="Thấp nhất"
-            value={filters.minPrice}
-            min={0}
-            max={Math.max(0, filters.maxPrice - 500)}
-            step={500}
-            format={(v) => `${v.toLocaleString('vi-VN')}₫`}
-            onChange={(v) => setFilters((f) => ({ ...f, minPrice: v }))}
-          />
-          <Stepper
-            label="Cao nhất"
-            value={filters.maxPrice}
-            min={Math.min(filters.minPrice + 500, 50000)}
-            max={50000}
-            step={500}
-            format={(v) => `${v.toLocaleString('vi-VN')}₫`}
-            onChange={(v) => setFilters((f) => ({ ...f, maxPrice: v }))}
-          />
-        </div>
-      </div>
-
-      <div className="filter-block">
-        <div className="filter-title">Đánh giá tối thiểu</div>
-        <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
-          {[0, 4.0, 4.5, 4.8].map((r) => (
-            <button key={r} className={`chip ${filters.minRating === r ? 'is-active' : ''}`}
-                    onClick={() => setFilters((f) => ({ ...f, minRating: r }))}>
-              {r === 0 ? 'Tất cả' : <><Icon name="star" size={11} /> {r.toFixed(1)}+</>}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {regions.length > 0 && (
-        <div className="filter-block">
-          <div className="filter-title">Khu vực</div>
-          <div className="checkboxes">
-            {regions.map((r) => (
-              <label key={r} className="cbox">
-                <input type="checkbox" checked={filters.regions.includes(r)} onChange={() => toggleSet('regions', r)} />
-                <span>{r}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="filter-block">
-        <div className="filter-title">Tiện nghi</div>
-        <div className="checkboxes">
-          {AMENITY_OPTIONS.map((a) => (
-            <label key={a.key} className="cbox">
-              <input type="checkbox" checked={filters.amenities.includes(a.key)} onChange={() => toggleSet('amenities', a.key)} />
-              <span>{a.label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-    </>
-  );
-
   return (
-    <div className="container-wide" style={{ paddingTop: 36, paddingBottom: 80 }}>
-      <div className="mb-8">
-        <div className="eyebrow mb-3">— {location ? `Tìm kiếm · ${location}` : 'Tất cả chỗ nghỉ'}</div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 24, flexWrap: 'wrap' }}>
-          <h1 className="h-1">
-            {isLoading ? '…' : filtered.length} chỗ nghỉ{location ? ` tại ${location}` : ' trên khắp Việt Nam'}.
+    <div className="container-wide page-enter" style={{ paddingTop: 28, paddingBottom: 90 }}>
+      <div className="mb-6">
+        <div className="eyebrow mb-3">— {location ? `Tìm kiếm · ${location}` : 'Nhà cho thuê'}</div>
+        <div className="list-head">
+          <h1 className="h-1" style={{ fontSize: 'clamp(22px, 3.5vw, 38px)' }}>
+            {isLoading ? '…' : filtered.length} nhà cho thuê{location ? ` tại ${location}` : ' tại TP. Hồ Chí Minh'}.
           </h1>
-          <button className="btn btn-ghost btn-sm" onClick={() => setShowSearch((s) => !s)}>
-            <Icon name="search" size={14} /> Tìm kiếm
-          </button>
         </div>
-        {showSearch && (
-          <div className="mt-6 fade-up">
-            <SearchBar initial={{ location }} onSubmit={onSearch} />
+
+        <div className="brand-strip">
+          <span className="brand-name">Chi Vinh Land</span>
+          <span className="brand-sep">·</span>
+          <span className="brand-tagline">Nhà thuê và căn hộ chất lượng tại TP. Hồ Chí Minh</span>
+        </div>
+
+        <div className="trust-row">
+          <span><Icon name="star" size={12} /> 4.8 đánh giá</span>
+          <span><Icon name="shield" size={12} /> Xác thực 100%</span>
+          <span><Icon name="calendar" size={12} /> Hỗ trợ 24/7</span>
+        </div>
+
+        {/* Mobile compact search bar */}
+        <div className="show-mobile" style={{ marginTop: 12 }}>
+          <div className="mobile-search-bar" style={{ display: 'flex', gap: 8 }}>
+            <button
+              className="btn btn-ghost btn-sm"
+              style={{ flex: 1, justifyContent: 'flex-start', gap: 8, padding: '10px 14px', fontSize: 13, fontWeight: 400, color: 'var(--ink-3)' }}
+              onClick={() => setMobileSearchOpen((s) => !s)}
+            >
+              <Icon name="search" size={14} />
+              {location || 'Tìm khu vực...'}
+            </button>
+            <button
+              className="btn btn-ghost"
+              style={{ padding: '10px 14px', fontSize: 13 }}
+              onClick={() => setFiltersOpen(true)}
+            >
+              <Icon name="filter" size={14} /> Bộ lọc
+              {activeFilterCount > 0 && <span className="filter-count-pill">{activeFilterCount}</span>}
+            </button>
           </div>
-        )}
+          {mobileSearchOpen && (
+            <div className="mt-3 fade-up">
+              <SearchBar initial={{ location }} onSubmit={(q) => { onSearch(q); setMobileSearchOpen(false); }} />
+            </div>
+          )}
+        </div>
+
       </div>
 
       <div className="hotels-toolbar">
-        <button type="button" className="btn btn-ghost btn-sm" onClick={() => setFiltersOpen(true)}>
-          <Icon name="filter" size={14} /> Bộ lọc
-          {activeFilterCount > 0 && <span className="filter-count-pill">{activeFilterCount}</span>}
-        </button>
-        <div className="sort">
+        <div className="show-mobile sort" style={{ width: '100%', justifyContent: 'flex-start' }}>
           {[['score','Nổi bật'],['price_asc','Giá ↑'],['price_desc','Giá ↓'],['rating','Đánh giá']].map(([k,l]) => (
             <button key={k} className={`sort-btn ${sort===k ? 'is-active' : ''}`} onClick={() => setSortAndUrl(k)}>{l}</button>
           ))}
@@ -218,11 +147,12 @@ export default function HotelsScreen() {
       </div>
 
       <div className="list-shell">
-        <aside className="filters">
-          {FiltersBody}
-          <div className="filter-block" style={{ borderBottom: 0 }}>
-            <button className="btn btn-ghost btn-sm" style={{ width: '100%' }}
-                    onClick={() => setFilters(DEFAULT_FILTERS)}>
+        <aside className="filters-desktop">
+          <div className="filters-desktop-inner">
+            <div className="filters-desktop-title">Bộ lọc</div>
+            <FilterBar />
+            <button type="button" className="filters-desktop-reset" onClick={resetFilters}>
+              <Icon name="x" size={14} />
               Xóa bộ lọc
             </button>
           </div>
@@ -238,16 +168,24 @@ export default function HotelsScreen() {
             </div>
           </div>
 
-          {!isLoading && filtered.length === 0 ? (
+          {!isLoading && isError ? (
+            <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center' }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>Không thể kết nối máy chủ</div>
+              <p className="text-muted mt-3">Vui lòng kiểm tra kết nối mạng hoặc thử lại sau.</p>
+              <button className="btn btn-primary btn-sm mt-4" onClick={() => refetch()}>
+                Thử lại
+              </button>
+            </div>
+          ) : !isLoading && filtered.length === 0 ? (
             <div className="card" style={{ padding: 'var(--space-6)', textAlign: 'center' }}>
               <div style={{ fontSize: 32 }}>Chưa có kết quả.</div>
-              <p className="text-muted mt-3">Không có chỗ nghỉ nào phù hợp với bộ lọc. Hãy thử mở rộng khoảng giá hoặc bỏ chọn khu vực.</p>
+              <p className="text-muted mt-3">Không có nhà cho thuê phù hợp với bộ lọc. Hãy thử mở rộng khoảng giá hoặc thay đổi khu vực.</p>
             </div>
           ) : (
             <div className="hotel-grid">
               {filtered.map((h, i) => (
                 <div key={h.id} className="fade-up" style={{ animationDelay: `${i * 0.04}s` }}>
-                  <HotelCard hotel={h} saved={isSaved(h.id)} onSave={() => onSave(h.id)} />
+                  <RoomCard hotel={h} saved={isSaved(h.id)} onSave={() => onSave(h.id)} />
                 </div>
               ))}
             </div>
@@ -255,33 +193,56 @@ export default function HotelsScreen() {
         </div>
       </div>
 
+      <section className="brand-intro">
+        <div className="brand-intro-card">
+          <div className="brand-intro-icon"><Icon name="home" size={24} /></div>
+          <div>
+            <h3 className="brand-intro-title">Chi Vinh Land</h3>
+            <p className="brand-intro-text">Căn hộ và nhà cho thuê tốt nhất tại TP. Hồ Chí Minh</p>
+            <p className="brand-intro-sub">Từ Quận 1 đến Thủ Đức — mỗi căn nhà đều được chọn lọc bởi đội ngũ của chúng tôi.</p>
+            <Link to="/about" className="brand-intro-link">Giới thiệu về Chi Vinh Land <Icon name="arrow-right" size={12} /></Link>
+          </div>
+        </div>
+      </section>
+
       {filtersOpen && createPortal(
         <>
-          <div className="mobile-backdrop" onClick={() => setFiltersOpen(false)} aria-hidden="true" />
-          <aside className="filters-as-drawer" role="dialog" aria-label="Bộ lọc">
-            <div className="filters-as-drawer-handle" />
-            <div className="filters-as-drawer-head">
-              <h2 className="h-3" style={{ margin: 0 }}>Bộ lọc</h2>
+          <div className="filter-drawer-overlay" onClick={() => setFiltersOpen(false)} aria-hidden="true" />
+          <aside className="filter-drawer" role="dialog" aria-label="Bộ lọc tìm kiếm">
+
+            <div className="filter-drawer-header">
+              <h2 className="filter-drawer-title">
+                Bộ lọc
+                {activeFilterCount > 0 && <span className="filter-drawer-count">({activeFilterCount})</span>}
+              </h2>
+              <button type="button" className="filter-drawer-close" onClick={() => setFiltersOpen(false)} aria-label="Đóng">
+                <Icon name="x" size={20} />
+              </button>
+            </div>
+
+            <div className="filter-content">
+              <FilterBar />
+            </div>
+
+            <div className="filter-footer">
               <button
                 type="button"
-                className="mobile-drawer-close"
-                onClick={() => setFiltersOpen(false)}
-                aria-label="Đóng bộ lọc"
+                className="filter-footer-btn filter-footer-btn-secondary"
+                onClick={resetFilters}
               >
-                <Icon name="x" size={18} />
+                <Icon name="x" size={14} />
+                Xóa lọc
+              </button>
+              <button
+                type="button"
+                className="filter-footer-btn filter-footer-btn-primary"
+                onClick={() => setFiltersOpen(false)}
+              >
+                Hiện {filtered.length} kết quả
+                <Icon name="arrow-right" size={16} />
               </button>
             </div>
-            <div className="filters-as-drawer-body">
-              {FiltersBody}
-            </div>
-            <div className="filters-as-drawer-foot">
-              <button className="btn btn-ghost" onClick={() => setFilters(DEFAULT_FILTERS)}>
-                Xóa
-              </button>
-              <button className="btn btn-primary" onClick={() => setFiltersOpen(false)}>
-                Hiện {filtered.length} chỗ nghỉ
-              </button>
-            </div>
+
           </aside>
         </>,
         document.body

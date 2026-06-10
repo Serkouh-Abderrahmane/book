@@ -29,8 +29,8 @@ export const hostProfileSchema = z.object({
 
 export const bookingSchema = z.object({
   room_id: z.number().int().positive(),
-  checkin_date: z.string().min(1, 'Chọn ngày nhận phòng'),
-  checkout_date: z.string().min(1, 'Chọn ngày trả phòng'),
+  checkin_date: z.string().min(1, 'Chọn ngày nhận nhà'),
+  checkout_date: z.string().min(1, 'Chọn ngày trả nhà'),
   guests: z.number().int().min(1).max(10),
 });
 
@@ -43,7 +43,7 @@ export const reviewSchema = z.object({
 });
 
 export const hotelBasicsSchema = z.object({
-  name: z.string().min(2, 'Tên khách sạn không được để trống'),
+  name: z.string().min(2, 'Tên nhà cho thuê không được để trống'),
   slug: z.string().min(2, 'Slug URL không được để trống').regex(/^[a-z0-9-]+$/, 'Chỉ chấp nhận chữ thường, số và dấu gạch ngang'),
   region: z.string().min(1, 'Vui lòng chọn khu vực'),
   city: z.string().min(1, 'Vui lòng nhập thành phố'),

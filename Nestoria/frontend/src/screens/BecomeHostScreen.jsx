@@ -5,16 +5,16 @@ import { useScrollRevealAll } from '../hooks/useScrollReveal.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 
 const WHY = [
-  { icon: 'sparkle',    title: 'Giới thiệu biên tập', body: 'Chỗ nghỉ của bạn được trình bày với nhiếp ảnh chuyên nghiệp và văn phong được viết bởi người đã từng ở đó.' },
-  { icon: 'compass',    title: 'Khách hàng chất lượng', body: 'Du khách chọn Phong Cảnh Việt tìm kiếm những chỗ lưu trú có chiều sâu. Tỷ lệ hủy dưới 4%.' },
-  { icon: 'shield',     title: 'Phí cố định 10%',      body: 'Không phí niêm yết, không phụ phí mỗi lần lưu trú, không tăng giá đột biến. Phép tính luôn rõ ràng.' },
+  { icon: 'sparkle',    title: 'Giới thiệu biên tập', body: 'Nhà cho thuê của bạn được trình bày với nhiếp ảnh chuyên nghiệp và văn phong được viết bởi người đã từng ở đó.' },
+  { icon: 'compass',    title: 'Người thuê chất lượng', body: 'Người thuê chọn Chi Vinh Land tìm kiếm những căn nhà có chiều sâu. Tỷ lệ hủy dưới 4%.' },
+  { icon: 'shield',     title: 'Phí cố định 10%',      body: 'Không phí niêm yết, không phụ phí mỗi lần cho thuê, không tăng giá đột biến. Phép tính luôn rõ ràng.' },
   { icon: 'calendar',   title: 'Thanh toán hàng tháng', body: 'Thanh toán vào ngày 1, sau khi trừ hoàn tiền. Chuyển khoản ngân hàng.' },
 ];
 
 const STEPS = [
-  { n: 1, title: 'Đăng ký',     body: 'Kể cho chúng tôi về chỗ nghỉ của bạn qua một biểu mẫu ngắn. Chúng tôi trả lời trong vòng một tuần với câu trả lời đồng ý, chưa sẵn sàng hoặc một cuộc trò chuyện.' },
+  { n: 1, title: 'Đăng ký',     body: 'Kể cho chúng tôi về nhà cho thuê của bạn qua một biểu mẫu ngắn. Chúng tôi trả lời trong vòng một tuần với câu trả lời đồng ý, chưa sẵn sàng hoặc một cuộc trò chuyện.' },
   { n: 2, title: 'Tiếp nhận',   body: 'Biên tập viên của chúng tôi đến thăm (hoặc sắp xếp chụp ảnh từ xa), viết nội dung niêm yết cùng bạn và giúp bạn thiết lập phòng.' },
-  { n: 3, title: 'Đi vào hoạt động',   body: 'Danh sách của bạn được xuất bản. Bạn quản lý đặt phòng, lịch và giá từ không gian đối tác — chúng tôi xử lý thanh toán.' },
+  { n: 3, title: 'Đi vào hoạt động',   body: 'Danh sách của bạn được xuất bản. Bạn quản lý yêu cầu thuê, lịch và giá từ không gian chủ nhà — chúng tôi xử lý thanh toán.' },
 ];
 
 export default function BecomeHostScreen() {
@@ -30,7 +30,7 @@ export default function BecomeHostScreen() {
             <div className="fade-up">
               <div className="hero-eyebrow">
                 <span className="hero-eyebrow-line" />
-                <span className="eyebrow">Dành cho đối tác</span>
+                <span className="eyebrow">Dành cho chủ nhà</span>
               </div>
               <h1 className="h-display hero-title">
                 Nếu bạn đã xây dựng<br/>
@@ -38,11 +38,11 @@ export default function BecomeHostScreen() {
                 chúng tôi rất muốn gặp bạn.
               </h1>
               <p className="hero-sub">
-                Phong Cảnh Việt hợp tác với các chủ khách sạn độc lập và chủ nhà coi trọng ngành hiếu khách như một nghề thủ công. Không niêm yết ồ ạt, không chạy đua xuống đáy — chỉ một danh sách nhỏ, được chụp ảnh đẹp về những chỗ nghỉ đáng để bay đến.
+                Chi Vinh Land hợp tác với các chủ nhà độc lập và chủ nhà coi trọng ngành cho thuê nhà như một nghề thủ công. Không niêm yết ồ ạt, không chạy đua xuống đáy — chỉ một danh sách nhỏ, được chụp ảnh đẹp về những căn nhà đáng để ở.
               </p>
               <div className="row mt-6" style={{ gap: 12, flexWrap: 'wrap' }}>
                 <Link to="/login?role=host" className="btn btn-accent btn-lg">
-                  Đăng ký làm đối tác <Icon name="arrow-right" size={14} />
+                  Đăng tin cho thuê <Icon name="arrow-right" size={14} />
                 </Link>
                 <a href="#how" className="btn btn-ghost btn-lg">Cách hoạt động</a>
               </div>
@@ -80,8 +80,8 @@ export default function BecomeHostScreen() {
         <div className="container-wide">
           <div className="section-head">
             <div className="section-title">
-              <div className="eyebrow mb-3">— Tại sao chọn Phong Cảnh Việt</div>
-              <h2 className="h-1">Bốn lý do đối tác gắn bó với chúng tôi.</h2>
+              <div className="eyebrow mb-3">— Tại sao chọn Chi Vinh Land</div>
+              <h2 className="h-1">Bốn lý do chủ nhà gắn bó với chúng tôi.</h2>
             </div>
           </div>
           <div className="grid-features-4 stagger-group">
@@ -124,7 +124,7 @@ export default function BecomeHostScreen() {
         <div className="container" style={{ maxWidth: 880, textAlign: 'center' }}>
           <div className="eyebrow mb-3">— Từ một đối tác</div>
           <p style={{ fontSize: 36, lineHeight: 1.25, color: 'var(--ink)', maxWidth: 760, margin: '0 auto' }}>
-            "Phong Cảnh Việt gửi ít khách hơn các trang lớn — và đánh giá của chúng tôi chưa bao giờ tốt hơn. Khách họ gửi đến thực sự muốn ở đây."
+            "Chi Vinh Land gửi ít người thuê hơn các trang lớn — và đánh giá của chúng tôi chưa bao giờ tốt hơn. Người thuê họ gửi đến thực sự muốn ở đây."
           </p>
           <div className="row mt-6" style={{ justifyContent: 'center', gap: 12 }}>
             <span className="avatar">V</span>
@@ -142,15 +142,15 @@ export default function BecomeHostScreen() {
           <div className="card cta-card">
             <div>
               <div className="eyebrow mb-3">— Sẵn sàng khi bạn</div>
-              <h2 className="h-1" style={{ maxWidth: 580 }}>Niêm yết chỗ nghỉ trong khoảng một giờ.</h2>
+              <h2 className="h-1" style={{ maxWidth: 580 }}>Niêm yết nhà cho thuê trong khoảng một giờ.</h2>
               <p className="section-sub mt-3" style={{ maxWidth: 480 }}>
                 Đăng ký, điền biểu mẫu, tải ảnh lên. Chúng tôi lo phần còn lại.
               </p>
             </div>
             <div className="stack" style={{ '--gap': '12px' }}>
-              <Link to="/login?role=host" className="btn btn-accent btn-lg">
-                Đăng ký làm đối tác <Icon name="arrow-right" size={14} />
-              </Link>
+                <Link to="/login?role=host" className="btn btn-accent btn-lg">
+                  Đăng tin cho thuê <Icon name="arrow-right" size={14} />
+                </Link>
               <Link to="/contact" className="btn btn-ghost btn-lg">Nói chuyện với chúng tôi trước</Link>
             </div>
           </div>

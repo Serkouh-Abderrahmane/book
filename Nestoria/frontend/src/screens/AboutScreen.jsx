@@ -5,10 +5,10 @@ import { usePageTitle } from '../hooks/usePageTitle.js';
 import { useScrollRevealAll } from '../hooks/useScrollReveal.js';
 
 const VALUES = [
-  { title: 'Chọn lọc kỹ càng', body: 'Chúng tôi chỉ hợp tác với những chỗ nghỉ có câu chuyện riêng — nơi chủ nhà biết tên từng vị khách và bữa sáng được nấu theo đơn đặt hàng.' },
-  { title: 'Trải nghiệm đích thực', body: 'Không có trải nghiệm "đóng gói". Mỗi kỳ nghỉ đều phản ánh văn hóa, kiến trúc và nhịp sống của vùng đất nơi nó tọa lạc.' },
-  { title: 'Dịch vụ tận tâm', body: 'Đội ngũ của chúng tôi am hiểu từng chỗ nghỉ. Gọi cho chúng tôi và bạn sẽ nói chuyện với người đã từng đặt chân đến nơi đó.' },
-  { title: 'Cộng đồng bền vững', body: 'Chúng tôi ưu tiên các chỗ nghỉ có trách nhiệm với môi trường và cộng đồng địa phương — từ homestay sử dụng năng lượng mặt trời đến khu nghỉ dưỡng bảo tồn rạn san hô.' },
+  { title: 'Chọn lọc kỹ càng', body: 'Chúng tôi chỉ hợp tác với những nhà cho thuê có câu chuyện riêng — nơi chủ nhà biết tên từng người thuê và không gian sống được chăm chút đến từng chi tiết.' },
+  { title: 'Không gian đích thực', body: 'Không có trải nghiệm "đóng gói". Mỗi căn nhà đều phản ánh văn hóa, kiến trúc và nhịp sống của vùng đất nơi nó tọa lạc.' },
+  { title: 'Dịch vụ tận tâm', body: 'Đội ngũ của chúng tôi am hiểu từng căn nhà. Gọi cho chúng tôi và bạn sẽ nói chuyện với người đã từng đặt chân đến nơi đó.' },
+  { title: 'Cộng đồng bền vững', body: 'Chúng tôi ưu tiên các nhà cho thuê có trách nhiệm với môi trường và cộng đồng địa phương.' },
 ];
 
 const TEAM = [
@@ -31,9 +31,9 @@ export default function AboutScreen() {
     <div className="container-wide" style={{ paddingTop: 36, paddingBottom: 80 }}>
       <section className="reveal" style={{ maxWidth: 720, marginBottom: 64 }}>
         <span className="eyebrow">— Giới thiệu</span>
-        <h1 className="h-1 mt-3">Phong Cảnh Việt là tuyển tập những chỗ nghỉ được lựa chọn bằng trái tim.</h1>
+        <h1 className="h-1 mt-3">Chi Vinh Land là nơi kết nối những căn nhà cho thuê với người thuê.</h1>
         <p className="text-muted mt-4" style={{ fontSize: 17, lineHeight: 1.7, maxWidth: 580 }}>
-          Chúng tôi tin rằng một kỳ nghỉ tuyệt vời không nằm ở số lượng tiện nghi, mà ở cảm giác khi bạn bước qua ngưỡng cửa. Mỗi chỗ nghỉ trong bộ sưu tập của chúng tôi đều có một linh hồn — và một người chủ biết chăm sóc nó.
+          Chúng tôi tin rằng một căn nhà tuyệt vời không nằm ở số lượng tiện nghi, mà ở cảm giác khi bạn bước qua ngưỡng cửa. Mỗi căn nhà trong bộ sưu tập của chúng tôi đều có một linh hồn — và một chủ nhà biết chăm sóc nó.
         </p>
       </section>
 
@@ -45,10 +45,7 @@ export default function AboutScreen() {
           <span className="eyebrow">— Câu chuyện</span>
           <h2 className="h-2 mt-3">Bắt đầu từ một chuyến đi.</h2>
           <p className="text-muted mt-4" style={{ fontSize: 15, lineHeight: 1.7 }}>
-            Năm 2024, người sáng lập của chúng tôi đi xuyên Việt và nhận ra rằng những chỗ nghỉ đáng nhớ nhất không phải là khách sạn sang trọng, mà là những ngôi nhà nhỏ nằm khuất trong thung lũng — nơi chủ nhà nấu bữa tối bằng rau từ vườn và chỉ đường lên thác nước bằng giọng địa phương.
-          </p>
-          <p className="text-muted mt-3" style={{ fontSize: 15, lineHeight: 1.7 }}>
-            Phong Cảnh Việt ra đời từ niềm tin đó: rằng du lịch không phải là danh sách điểm đến, mà là những kết nối. Ba năm sau, chúng tôi tự hào giới thiệu hơn 40 chỗ nghỉ trên khắp Việt Nam — mỗi nơi đều được chọn lọc bởi đội ngũ của chính chúng tôi.
+            Chi Vinh Land ra đời từ niềm tin rằng một căn nhà không chỉ là nơi ở — mà là nơi kết nối. Chúng tôi tự hào giới thiệu những căn nhà cho thuê chất lượng trên khắp Việt Nam — mỗi nơi đều được chọn lọc bởi đội ngũ của chính chúng tôi.
           </p>
         </div>
       </section>
@@ -68,7 +65,7 @@ export default function AboutScreen() {
 
       <section className="reveal" style={{ marginBottom: 64 }}>
         <span className="eyebrow">— Đội ngũ</span>
-        <h2 className="h-2 mt-3 mb-6">Những người tạo nên Phong Cảnh Việt.</h2>
+        <h2 className="h-2 mt-3 mb-6">Những người tạo nên Chi Vinh Land.</h2>
         <div className="grid-split-2" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
           {TEAM.map((m) => (
             <div key={m.name}>
@@ -97,7 +94,7 @@ export default function AboutScreen() {
               Liên hệ <Icon name="arrow-right" size={12} />
             </Link>
             <Link to="/become-host" className="btn btn-ghost btn-sm">
-              Trở thành đối tác
+              Trở thành chủ nhà
             </Link>
           </div>
         </div>

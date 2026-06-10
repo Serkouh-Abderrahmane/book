@@ -25,7 +25,7 @@ export default function JournalPostScreen() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const post = JOURNAL_POSTS.find((p) => p.slug === slug);
-  usePageTitle('Tạp chí');
+  usePageTitle('Tin tức');
 
   if (!post) {
     return (
