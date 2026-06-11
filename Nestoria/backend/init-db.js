@@ -84,6 +84,7 @@ async function runInit() {
     '013_loai_can_ho.sql',
     '014_add_room_property_type.sql',
     '015_fix_hotel_data.sql',
+    '016_fix_real_images.sql',
   ];
 
   if (await tableExists('hotels')) {
