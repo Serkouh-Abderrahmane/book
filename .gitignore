@@ -8,3 +8,6 @@ Nestoria/frontend/dist/
 *.err
 *-env.txt
 _tmp_*
+tmp_*
+test-db.js
+*.bak
