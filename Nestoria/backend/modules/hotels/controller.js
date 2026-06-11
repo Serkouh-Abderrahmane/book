@@ -18,7 +18,16 @@ async function loadAmenities(hotelIds) {
 
 // ---------- GET /hotels  (search / list) ----------
 const search = asyncHandler(async (req, res) => {
-  const { location, min_price, max_price, min_rating, region, sort = 'score' } = req.query;
+  const { location, property_type, min_price, max_price, amenities, sort = 'score' } = req.query;
+  
+  // Validate that only known params are provided
+  const allowedParams = new Set(['location', 'property_type', 'min_price', 'max_price', 'amenities', 'sort']);
+  for (const key of Object.keys(req.query)) {
+    if (!allowedParams.has(key)) {
+      throw badRequest(`Unknown filter parameter: ${key}`);
+    }
+  }
+
   const params = [];
   const where = [];
 
@@ -26,10 +35,8 @@ const search = asyncHandler(async (req, res) => {
     params.push(`%${location}%`);
     where.push(`(h.city ILIKE $${params.length} OR h.region ILIKE $${params.length} OR h.name ILIKE $${params.length})`);
   }
-  if (region) { params.push(region); where.push(`h.region = $${params.length}`); }
   if (min_price) { params.push(Number(min_price)); where.push(`h.price_from >= $${params.length}`); }
   if (max_price) { params.push(Number(max_price)); where.push(`h.price_from <= $${params.length}`); }
-  if (min_rating) { params.push(Number(min_rating)); where.push(`h.rating_avg >= $${params.length}`); }
 
   const ORDER = {
     score:      'h.score DESC, h.rating_avg DESC',
@@ -41,7 +48,7 @@ const search = asyncHandler(async (req, res) => {
 
   const { rows: hotels } = await pool.query(
     `SELECT h.id, h.slug, h.name, h.region, h.city, h.address, h.description,
-            h.hero_image_url, h.hue, h.badge, h.price_from,
+            h.hero_image_url, h.hue, h.badge, h.price_from, h.property_type,
             h.rating_avg, h.rating_count, h.score,
             h.checkin_time, h.checkout_time
        FROM hotels h
@@ -51,9 +58,60 @@ const search = asyncHandler(async (req, res) => {
     params
   );
 
-  const amenities = await loadAmenities(hotels.map((h) => h.id));
-  hotels.forEach((h) => { h.amenities = amenities.get(h.id) || []; });
-  res.json({ hotels });
+  // Normalize property_type before filtering so the filter operates on
+  // the same values the frontend sees and sends back.
+  const ALLOWED_TYPES = new Set(['Phòng trọ', 'Căn hộ 3N2W', 'Căn hộ 2N2W', 'Căn hộ 2N1W', 'Căn hộ 1N', 'Căn hộ studio', 'Căn hộ chung cư mini']);
+  hotels.forEach((h) => {
+    if (!h.property_type || !ALLOWED_TYPES.has(h.property_type)) h.property_type = 'Căn hộ 1N';
+  });
+
+  // Filter by property_type (in-memory since we already fetch it)
+  let filtered = hotels;
+  if (property_type) {
+    if (property_type === 'CAN_HO') {
+      filtered = hotels.filter((h) => h.property_type.startsWith('Căn hộ'));
+    } else {
+      filtered = hotels.filter((h) => h.property_type === property_type);
+    }
+  }
+
+  // TODO: Implement amenities filtering when amenities schema is fully mapped to hotels
+
+const amenitiesMap = await loadAmenities(filtered.map((h) => h.id));
+  filtered.forEach((h) => { h.amenities = amenitiesMap.get(h.id) || []; });
+  function makeAbsolute(u) {
+    if (!u) return u;
+    if (u.startsWith('http://') || u.startsWith('https://')) return u;
+    if (u.startsWith('/images')) return u;
+    const proto = req.protocol || 'https';
+    const host = req.get('host') || 'render-server';
+    return `${proto}://${host}${u}`;
+  }
+
+  // Ensure every hotel has a usable hero image — fall back to curated apartment/interior images
+  // Use local demo images (SVGs) stored in frontend/public/images so demos never 404
+  const FALLBACK_IMAGES = [
+    '/images/apartment-1.svg',
+    '/images/apartment-2.svg',
+    '/images/room-1.svg',
+    '/images/kitchen-1.svg',
+    '/images/bedroom-1.svg',
+    '/images/livingroom-1.svg',
+  ];
+  filtered.forEach((h, i) => {
+    if (!h.hero_image_url || h.hero_image_url.trim() === '' || h.hero_image_url.includes('supabase.co')) {
+      h.hero_image_url = FALLBACK_IMAGES[i % FALLBACK_IMAGES.length];
+    }
+    // if gallery missing, provide a small gallery based on hero
+    if (!h.hero_image_url) h.hero_image_url = FALLBACK_IMAGES[0];
+    // make hero absolute if it's a local upload path
+    h.hero_image_url = makeAbsolute(h.hero_image_url);
+    // Ensure name is never null, placeholder text, or a slug-like value
+    if (!h.name || h.name.includes('[REMOVED]') || h.name.startsWith('removed-')) {
+      h.name = 'Nhà cho thuê';
+    }
+  });
+  res.json({ hotels: filtered });
 });
 
 // ---------- GET /hotels/destinations  (home page list) ----------
@@ -86,9 +144,7 @@ const detail = asyncHandler(async (req, res) => {
   const [amenitiesRes, roomsRes, reviewsRes, imagesRes] = await Promise.all([
     pool.query(`SELECT a.key, a.label, a.icon FROM hotel_amenities ha
                 JOIN amenities a ON a.id = ha.amenity_id WHERE ha.hotel_id = $1 ORDER BY a.id`, [hotel.id]),
-    pool.query(`SELECT r.id, r.type, r.view, r.beds, r.size_sqm, r.price_per_night,
-                       r.image_url, r.hue, r.status, r.rating_avg, r.rating_count, r.score
-                  FROM rooms r WHERE r.hotel_id = $1 ORDER BY r.price_per_night`, [hotel.id]),
+    pool.query(`SELECT r.* FROM rooms r WHERE r.hotel_id = $1 ORDER BY r.price_per_night`, [hotel.id]),
     pool.query(`SELECT hr.id, hr.rating, hr.comment, hr.created_at,
                        c.full_name AS customer_name
                   FROM hotel_reviews hr JOIN customers c ON c.id = hr.customer_id
@@ -102,12 +158,25 @@ const detail = asyncHandler(async (req, res) => {
   hotel.rooms     = roomsRes.rows;
   hotel.reviews   = reviewsRes.rows;
   hotel.gallery   = imagesRes.rows;
+  const ALLOWED_TYPES = new Set(['Phòng trọ', 'Căn hộ 3N2W', 'Căn hộ 2N2W', 'Căn hộ 2N1W', 'Căn hộ 1N', 'Căn hộ studio', 'Căn hộ chung cư mini']);
+  if (!hotel.property_type || !ALLOWED_TYPES.has(hotel.property_type)) hotel.property_type = 'Căn hộ 1N';
+  if (!hotel.name || hotel.name.includes('[REMOVED]') || hotel.name.startsWith('removed-')) hotel.name = 'Nhà cho thuê';
+  if (!hotel.hero_image_url || hotel.hero_image_url.trim() === '' || hotel.hero_image_url.includes('supabase.co')) {
+    hotel.hero_image_url = '/images/room-1.svg';
+  }
   res.json({ hotel });
 });
 
 // ---------- POST /hotels  (host creates) ----------
 const create = asyncHandler(async (req, res) => {
-  const { name, slug, region, city, address, description, checkin_time, checkout_time, phone, hero_image_url, hue, badge, amenities, latitude, longitude } = req.body;
+  const {
+    name, slug, region, city, address, description,
+    checkin_time, checkout_time, phone, hero_image_url, hue, badge,
+    amenities, latitude, longitude,
+    nearby_places, road_type, neighborhood, ward, district,
+    electricity_price, water_price, management_fee, parking_fee, has_window, has_mattress,
+    toilet_type, hour_rule, washing_machine, has_balcony, allow_pets, parking_type, ev_charger,
+  } = req.body;
   if (!name || !slug) throw badRequest('name and slug are required');
 
   // Hosts must complete their business profile before listing.
@@ -124,12 +193,30 @@ const create = asyncHandler(async (req, res) => {
   try {
     await client.query('BEGIN');
     const { rows } = await client.query(
-      `INSERT INTO hotels (host_id, name, slug, region, city, address, description,
-                           checkin_time, checkout_time, phone, hero_image_url, hue, badge,
-                           latitude, longitude)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
-       RETURNING *`,
-      [req.user.id, name, slug, region, city, address, description, checkin_time, checkout_time, phone, hero_image_url, hue || 'sand', badge, latitude ?? null, longitude ?? null]
+      `INSERT INTO hotels (
+        host_id, name, slug, region, city, address, description,
+        checkin_time, checkout_time, phone, hero_image_url, hue, badge,
+        property_type,
+        latitude, longitude,
+        nearby_places, road_type, neighborhood, ward, district,
+        electricity_price, water_price, management_fee, parking_fee, has_window, has_mattress,
+        toilet_type, hour_rule, washing_machine, has_balcony, allow_pets, parking_type, ev_charger
+      ) VALUES (
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,
+        $16,$17,$18,$19,$20,
+        $21,$22,$23,$24,$25,$26,
+        $27,$28,$29,$30,$31,$32,$33
+      ) RETURNING *`,
+      [
+        req.user.id, name, slug, region, city, address, description,
+        checkin_time, checkout_time, phone, hero_image_url, hue || 'sand', badge,
+        // property_type comes from the basics form; allow null
+        req.body.property_type ?? null,
+        latitude ?? null, longitude ?? null,
+        nearby_places ?? null, road_type ?? null, neighborhood ?? null, ward ?? null, district ?? null,
+        electricity_price ?? null, water_price ?? null, management_fee ?? null, parking_fee ?? null, has_window ?? null, has_mattress ?? null,
+        toilet_type ?? null, hour_rule ?? null, washing_machine ?? null, has_balcony ?? null, allow_pets ?? null, parking_type ?? null, ev_charger ?? null,
+      ]
     );
     const hotel = rows[0];
     if (Array.isArray(amenities) && amenities.length) {
@@ -160,7 +247,14 @@ async function assertOwner(hotelId, hostId) {
 const update = asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
   await assertOwner(id, req.user.id);
-  const allowed = ['name', 'region', 'city', 'address', 'description', 'checkin_time', 'checkout_time', 'phone', 'hero_image_url', 'hue', 'badge', 'latitude', 'longitude'];
+  const allowed = [
+    'name', 'region', 'city', 'address', 'description', 'checkin_time', 'checkout_time',
+    'phone', 'hero_image_url', 'hue', 'badge', 'latitude', 'longitude',
+    'property_type',
+    'nearby_places', 'road_type', 'neighborhood', 'ward', 'district',
+    'electricity_price', 'water_price', 'management_fee', 'parking_fee', 'has_window', 'has_mattress',
+    'toilet_type', 'hour_rule', 'washing_machine', 'has_balcony', 'allow_pets', 'parking_type', 'ev_charger',
+  ];
   const fields = allowed.filter((f) => req.body[f] !== undefined);
   if (!fields.length) return res.json({ updated: false });
   const set = fields.map((f, i) => `${f} = $${i + 1}`).join(', ');
@@ -174,6 +268,13 @@ const update = asyncHandler(async (req, res) => {
 const remove = asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
   await assertOwner(id, req.user.id);
+
+  // Prevent deleting hotels with active bookings
+  const { rows: bookingCheck } = await pool.query(
+    `SELECT 1 FROM bookings WHERE hotel_id = $1 AND status IN ('pending','confirmed') LIMIT 1`, [id]
+  );
+  if (bookingCheck.length > 0) throw badRequest('Cannot delete hotel with active bookings');
+
   await pool.query('DELETE FROM hotels WHERE id = $1', [id]);
   res.status(204).end();
 });
