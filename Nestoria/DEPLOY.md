@@ -102,5 +102,5 @@ Then open `https://book-orcin-gamma.vercel.app` and log in.
 | Role | Email | Password |
 |------|-------|----------|
 | Customer | `demo@example.com` | `Demo1234` |
-| Host | `vikram@marigold.in` | `password123` |
+| Host | `vikram@chivinhland.vn` | `password123` |
 | Admin | `admin@example.com` | `Admin1234` |

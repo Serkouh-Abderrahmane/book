@@ -11,8 +11,8 @@ const localtunnel = require('localtunnel');
 const ROOT = __dirname;
 const FE_PORT = 5173;
 const BE_PORT = 5000;
-const FE_SUBDOMAIN = 'nestoria-fe-' + Math.random().toString(36).slice(2, 6);
-const BE_SUBDOMAIN = 'nestoria-be-' + Math.random().toString(36).slice(2, 6);
+  const FE_SUBDOMAIN = 'nestoria-fe-' + Math.random().toString(36).slice(2, 6);
+  const BE_SUBDOMAIN = 'nestoria-be-' + Math.random().toString(36).slice(2, 6);
 
 function readEnv(file) {
   try { return fs.readFileSync(file, 'utf8'); } catch { return ''; }
@@ -85,6 +85,13 @@ function writeEnv(file, content) {
     beEnv += `\nCORS_ORIGIN=${feUrl},http://localhost:5173\n`;
   }
   writeEnv(beEnvPath, beEnv);
+
+  // 6b. Update frontend .env immediately so the dev server uses the backend tunnel URL
+  try {
+    const feEnvPath = path.join(ROOT, 'frontend', '.env');
+    const feEnv = `VITE_API_URL=${beUrl}/api\nVITE_GOOGLE_CLIENT_ID=\n`;
+    writeEnv(feEnvPath, feEnv);
+  } catch (err) { /* ignore */ }
 
   // 7. Restart backend with new CORS
   be.kill('SIGTERM');

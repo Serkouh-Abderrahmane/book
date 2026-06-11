@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import Icon from './Icon.jsx';
 import Photo from './Photo.jsx';
+import PropertyTypeBadge from './PropertyTypeBadge.jsx';
 
 function formatPrice(vnd) {
   return Number(vnd || 0).toLocaleString('vi-VN');
@@ -66,9 +67,7 @@ export default function RoomCard({
     ? room.status === 'available'
     : Boolean(hotel.badge);
 
-  const roomCode = hasRoom
-    ? (room.name || room.type || `P.${room.id}`)
-    : hotel.name;
+  const cardTitle = hotel.name || (room && room.name) || hotel.slug || 'Nhà cho thuê';
 
   const imageUrl = hasRoom
     ? (room.image_url || hotel.hero_image_url)
@@ -103,13 +102,35 @@ export default function RoomCard({
     if (onCall) onCall(hotel, room);
   };
 
+  const TYPES = ['Phòng trọ', 'Căn hộ 3N2W', 'Căn hộ 2N2W', 'Căn hộ 2N1W', 'Căn hộ 1N', 'Căn hộ studio', 'Căn hộ chung cư mini'];
+
+  const normalizeType = (s) => {
+    if (!s) return null;
+    if (TYPES.includes(s)) return s;
+    const t = String(s).toLowerCase();
+    if (t.includes('phòng trọ') || t.includes('phong tro')) return 'Phòng trọ';
+    if (t.includes('studio')) return 'Căn hộ studio';
+    if (t.includes('chung cư mini') || t.includes('chung cu mini') || t.includes('căn hộ mini')) return 'Căn hộ chung cư mini';
+    if (t.includes('3n2w') || t.includes('3pn') || t.includes('3 phòng')) return 'Căn hộ 3N2W';
+    if (t.includes('2n2w') || (t.includes('2pn') || t.includes('2 phòng')) && (t.includes('2wc') || t.includes('2 wc') || t.includes('2 nhà vệ sinh'))) return 'Căn hộ 2N2W';
+    if (t.includes('2n1w') || (t.includes('2pn') || t.includes('2 phòng')) && (t.includes('1wc') || t.includes('1 wc') || t.includes('1 nhà vệ sinh'))) return 'Căn hộ 2N1W';
+    if (t.includes('2pn') || t.includes('2 phòng')) return 'Căn hộ 2N2W';
+    if (t.includes('1n') || t.includes('1pn') || t.includes('1 phòng')) return 'Căn hộ 1N';
+    if (t.includes('căn hộ')) return 'Căn hộ 1N';
+    return null;
+  };
+
+  const rawPropertyType = (room && room.property_type) || hotel.property_type;
+  const badgeType = rawPropertyType ? (normalizeType(rawPropertyType) || rawPropertyType) : null;
+
   return (
     <article
       className={`room-card ${hasRoom ? 'room-card--room' : 'room-card--hotel'}`}
       onClick={() => navigate(detailPath)}
     >
       <div className="room-card-img">
-        <Photo hue={hotel.hue} src={imageUrl} alt={roomCode} />
+        <Photo hue={hotel.hue} src={imageUrl} alt={cardTitle} />
+        <PropertyTypeBadge type={badgeType} />
         {onSave && (
           <button
             className={`room-card-save ${saved ? 'is-saved' : ''}`}
@@ -126,10 +147,12 @@ export default function RoomCard({
       <div className="room-card-body">
         <div className="room-card-head">
           <div className="room-card-title-row">
-            <h3 className="room-card-title">{roomCode}</h3>
-            <RoomBadge verified={isVerified} />
+            <h3 className="room-card-title">{cardTitle}</h3>
+            <div className="room-card-badges">
+              <RoomBadge verified={isVerified} />
+            </div>
           </div>
-          {hasRoom && room.type && room.type !== roomCode && (
+          {hasRoom && room.type && room.type !== cardTitle && (
             <span className="room-card-type">{room.type}</span>
           )}
         </div>

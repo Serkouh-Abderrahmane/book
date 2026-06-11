@@ -16,6 +16,7 @@ export default function Header({ theme, setTheme }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isHost = user?.role === 'host';
+  const isAdmin = user?.role === 'admin';
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -46,9 +47,19 @@ export default function Header({ theme, setTheme }) {
           <ThemeToggle theme={theme} setTheme={setTheme} />
           {user ? (
             <>
+              {isAdmin && (
+                <button className="btn btn-ghost btn-sm" onClick={() => navigate('/admin')}>
+                  <Icon name="shield" size={14} /> Admin
+                </button>
+              )}
+              {isHost && (
+                <button className="btn btn-ghost btn-sm" onClick={() => navigate('/host/dashboard')}>
+                  <Icon name="home" size={14} /> Host
+                </button>
+              )}
               <button
                 className="btn btn-ghost btn-sm"
-                onClick={() => navigate(isHost ? '/host/profile' : '/profile')}
+                onClick={() => navigate(isHost ? '/host/profile' : isAdmin ? '/admin/settings' : '/profile')}
               >
                 <Icon name="user" size={14} /> {user.full_name?.split(' ')[0] || 'Bạn'}
               </button>

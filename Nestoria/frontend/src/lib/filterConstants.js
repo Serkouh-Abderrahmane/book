@@ -26,7 +26,7 @@ export const WARDS = {
   'Gò Vấp': ['Phường 1', 'Phường 3', 'Phường 4', 'Phường 5', 'Phường 6', 'Phường 7', 'Phường 8', 'Phường 9', 'Phường 10', 'Phường 11', 'Phường 12', 'Phường 13', 'Phường 14', 'Phường 15', 'Phường 16', 'Phường 17'],
   'Phú Nhuận': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4', 'Phường 5', 'Phường 7', 'Phường 8', 'Phường 9', 'Phường 10', 'Phường 11', 'Phường 12', 'Phường 13', 'Phường 15', 'Phường 17'],
   'Tân Bình': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4', 'Phường 5', 'Phường 6', 'Phường 7', 'Phường 8', 'Phường 9', 'Phường 10', 'Phường 11', 'Phường 12', 'Phường 13', 'Phường 14', 'Phường 15'],
-  'Tân Phú': ['Phường Hiệp Tân', 'Phường Hòa Thạnh', 'Phường Phú Thạnh', 'Phường Phú Thọ Hòa', 'Phường Phú Trung', 'Phường Sơn Kỳ', 'Phường Tân Quý', 'Phường Tân Sơn Nhì', 'Phường Tân Thành', 'Phường Tân Thới Hòa', 'Phường Tây Thạnh'],
+  'Tân Phú': ['Phường Hiệp Tân', 'Phường Hòa Thạnh', 'Phường Phú Thạnh', 'Phường Phú Thọ Hòa', 'Phường Phú Trung', 'Phường Sơn Kỳ', 'Phường Tân Quý', 'Phường Tân Sơn Nhì', 'Phường Tân Thành', 'Phường Tân Thời Hòa', 'Phường Tây Thạnh'],
   'Thủ Đức': ['Phường Bình Chiểu', 'Phường Bình Thọ', 'Phường Hiệp Bình Chánh', 'Phường Hiệp Bình Phước', 'Phường Linh Chiểu', 'Phường Linh Đông', 'Phường Linh Tây', 'Phường Linh Trung', 'Phường Linh Xuân', 'Phường Long Bình', 'Phường Long Phước', 'Phường Long Thạnh Mỹ', 'Phường Phú Hữu', 'Phường Tam Bình', 'Phường Tam Phú', 'Phường Tân Phú', 'Phường Trường Thạnh'],
   'Bình Chánh': ['Xã An Phú Tây', 'Xã Bình Chánh', 'Xã Bình Hưng', 'Xã Bình Lợi', 'Xã Đa Phước', 'Xã Hưng Long', 'Xã Lê Minh Xuân', 'Xã Phạm Văn Hai', 'Xã Tân Kiên', 'Xã Tân Nhựt', 'Xã Tân Quý Tây', 'Xã Vĩnh Lộc A', 'Xã Vĩnh Lộc B'],
   'Hóc Môn': ['Xã Bà Điểm', 'Xã Đông Thạnh', 'Xã Nhị Bình', 'Xã Tân Hiệp', 'Xã Tân Thới Nhì', 'Xã Tân Xuân', 'Xã Thới Tam Thôn', 'Xã Trung Chánh', 'Xã Xuân Thới Đông', 'Xã Xuân Thới Sơn', 'Xã Xuân Thới Thượng'],
@@ -35,25 +35,62 @@ export const WARDS = {
   'Cần Giờ': ['Xã An Thới Đông', 'Xã Bình Khánh', 'Xã Cần Thạnh', 'Xã Đồng Hòa', 'Xã Long Hòa', 'Xã Lý Nhơn', 'Xã Tam Thôn Hiệp', 'Xã Thạnh An'],
 };
 
-export const ROOM_TYPES = [
-  'Phòng trọ',
-  'Căn hộ',
-  'Studio',
-  'Nhà nguyên căn',
-  'Biệt thự',
-  'Khách sạn',
+// Room type options: flat structure with metadata for grouping and backend values
+export const ROOM_TYPE_OPTIONS = [
+  {
+    id: 'PHONG_TRO',
+    label: 'Phòng trọ',
+    group: null,
+    property_type: 'Phòng trọ',
+  },
+  {
+    id: 'CAN_HO_3N2W',
+    label: 'Căn hộ 3N2W',
+    group: 'Căn hộ',
+    property_type: 'Căn hộ 3N2W',
+  },
+  {
+    id: 'CAN_HO_2N2W',
+    label: 'Căn hộ 2N2W',
+    group: 'Căn hộ',
+    property_type: 'Căn hộ 2N2W',
+  },
+  {
+    id: 'CAN_HO_2N1W',
+    label: 'Căn hộ 2N1W',
+    group: 'Căn hộ',
+    property_type: 'Căn hộ 2N1W',
+  },
+  {
+    id: 'CAN_HO_1N',
+    label: 'Căn hộ 1N',
+    group: 'Căn hộ',
+    property_type: 'Căn hộ 1N',
+  },
+  {
+    id: 'CAN_HO_STUDIO',
+    label: 'Căn hộ studio',
+    group: 'Căn hộ',
+    property_type: 'Căn hộ studio',
+  },
+  {
+    id: 'CAN_HO_CHUNG_CU_MINI',
+    label: 'Căn hộ chung cư mini',
+    group: 'Căn hộ',
+    property_type: 'Căn hộ chung cư mini',
+  },
 ];
 
 export const PRICE_RANGES = [
-  { label: '≤ 2 triệu', min: 0, max: 2000 },
-  { label: '2 – 3 triệu', min: 2000, max: 3000 },
-  { label: '3 – 4 triệu', min: 3000, max: 4000 },
-  { label: '4 – 5 triệu', min: 4000, max: 5000 },
-  { label: '5 – 6 triệu', min: 5000, max: 6000 },
-  { label: '6 – 8 triệu', min: 6000, max: 8000 },
-  { label: '8 – 10 triệu', min: 8000, max: 10000 },
-  { label: '10 – 12 triệu', min: 10000, max: 12000 },
-  { label: '≥ 12 triệu', min: 12000, max: 100000 },
+  { id: 'p0', label: '≤ 2 triệu', min: 0, max: 2000 },
+  { id: 'p1', label: '2 – 3 triệu', min: 2000, max: 3000 },
+  { id: 'p2', label: '3 – 4 triệu', min: 3000, max: 4000 },
+  { id: 'p3', label: '4 – 5 triệu', min: 4000, max: 5000 },
+  { id: 'p4', label: '5 – 6 triệu', min: 5000, max: 6000 },
+  { id: 'p5', label: '6 – 8 triệu', min: 6000, max: 8000 },
+  { id: 'p6', label: '8 – 10 triệu', min: 8000, max: 10000 },
+  { id: 'p7', label: '10 – 12 triệu', min: 10000, max: 12000 },
+  { id: 'p8', label: '12 triệu', min: 12000, max: 100000 },
 ];
 
 export const AMENITIES = [
@@ -61,34 +98,3 @@ export const AMENITIES = [
   { key: 'no_ac', label: 'Không máy lạnh' },
   { key: 'pet', label: 'Nuôi thú cưng' },
 ];
-
-export const DEFAULT_FILTERS = {
-  province: '',
-  district: '',
-  ward: '',
-  roomType: '',
-  selectedPriceRanges: [],
-  selectedAmenities: [],
-};
-
-export const FILTER_PARAM_NAMES = {
-  province: 'province',
-  district: 'district',
-  ward: 'ward',
-  roomType: 'roomType',
-  minPrice: 'minPrice',
-  maxPrice: 'maxPrice',
-  amenities: 'amenities',
-};
-
-export function priceRangeToParam(ranges) {
-  if (!ranges || ranges.length === 0) return { minPrice: undefined, maxPrice: undefined };
-  let min = Infinity, max = -Infinity;
-  for (const r of ranges) {
-    if (r.min < min) min = r.min;
-    if (r.max > max) max = r.max;
-  }
-  if (min === Infinity) min = undefined;
-  if (max === -Infinity) max = undefined;
-  return { minPrice: min, maxPrice: max };
-}

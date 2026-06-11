@@ -8,7 +8,8 @@ import Footer from './components/Footer.jsx';
 import TweaksPanel from './components/TweaksPanel.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import GlobalErrorCapture from './components/GlobalErrorCapture.jsx';
-import DebugPanel from './components/DebugPanel.jsx';
+import AdminLayout from './components/AdminLayout.jsx';
+import HostLayout from './components/HostLayout.jsx';
 
 import HomeScreen        from './screens/HomeScreen.jsx';
 import HotelsScreen      from './screens/HotelsScreen.jsx';
@@ -17,7 +18,11 @@ import BookingScreen     from './screens/BookingScreen.jsx';
 import LoginScreen       from './screens/LoginScreen.jsx';
 import ProfileScreen     from './screens/ProfileScreen.jsx';
 import ReservationScreen from './screens/ReservationScreen.jsx';
-import HostScreen        from './screens/HostScreen.jsx';
+import HostDashboardScreen from './screens/HostDashboardScreen.jsx';
+import HostRoomsScreen   from './screens/HostRoomsScreen.jsx';
+import HostBookingsScreen from './screens/HostBookingsScreen.jsx';
+import HostProfileScreen from './screens/HostProfileScreen.jsx';
+import HostSettingsScreen from './screens/HostSettingsScreen.jsx';
 import AddRoomsScreen    from './screens/AddRoomsScreen.jsx';
 import AboutScreen       from './screens/AboutScreen.jsx';
 import JournalScreen     from './screens/JournalScreen.jsx';
@@ -26,7 +31,17 @@ import HelpScreen        from './screens/HelpScreen.jsx';
 import ContactScreen     from './screens/ContactScreen.jsx';
 import LegalScreen       from './screens/LegalScreen.jsx';
 import BecomeHostScreen  from './screens/BecomeHostScreen.jsx';
+import ViewingsScreen    from './screens/ViewingsScreen.jsx';
 import NotFoundScreen    from './screens/NotFoundScreen.jsx';
+
+import AdminDashboardScreen from './screens/AdminDashboardScreen.jsx';
+import AdminHotelsScreen    from './screens/AdminHotelsScreen.jsx';
+import AdminRoomsScreen     from './screens/AdminRoomsScreen.jsx';
+import AdminBookingsScreen  from './screens/AdminBookingsScreen.jsx';
+import AdminViewingsScreen  from './screens/AdminViewingsScreen.jsx';
+import AdminReviewsScreen   from './screens/AdminReviewsScreen.jsx';
+import AdminCustomersScreen from './screens/AdminCustomersScreen.jsx';
+import AdminSettingsScreen  from './screens/AdminSettingsScreen.jsx';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -58,9 +73,23 @@ function AnimatedRoutes() {
         <Route path="/login"           element={<LoginScreen />} />
         <Route path="/profile"         element={<ProtectedRoute requireRole="customer"><ProfileScreen /></ProtectedRoute>} />
         <Route path="/reservations/:id" element={<ProtectedRoute requireRole="customer"><ReservationScreen /></ProtectedRoute>} />
-        <Route path="/host/dashboard"  element={<ProtectedRoute requireRole="host"><HostScreen /></ProtectedRoute>} />
-        <Route path="/host/profile"    element={<ProtectedRoute requireRole="host"><HostScreen tab="profile" /></ProtectedRoute>} />
-        <Route path="/host/add-rooms"  element={<ProtectedRoute requireRole="host"><AddRoomsScreen /></ProtectedRoute>} />
+        <Route path="/host/dashboard"  element={<ProtectedRoute requireRole="host"><HostLayout><HostDashboardScreen /></HostLayout></ProtectedRoute>} />
+        <Route path="/host/rooms"      element={<ProtectedRoute requireRole="host"><HostLayout><HostRoomsScreen /></HostLayout></ProtectedRoute>} />
+        <Route path="/host/bookings"   element={<ProtectedRoute requireRole="host"><HostLayout><HostBookingsScreen /></HostLayout></ProtectedRoute>} />
+        <Route path="/host/create-room" element={<ProtectedRoute requireRole="host"><HostLayout><AddRoomsScreen /></HostLayout></ProtectedRoute>} />
+        <Route path="/host/viewings"   element={<ProtectedRoute requireRole="host"><HostLayout><ViewingsScreen /></HostLayout></ProtectedRoute>} />
+        <Route path="/host/profile"    element={<ProtectedRoute requireRole="host"><HostLayout><HostProfileScreen /></HostLayout></ProtectedRoute>} />
+        <Route path="/host/settings"   element={<ProtectedRoute requireRole="host"><HostLayout><HostSettingsScreen /></HostLayout></ProtectedRoute>} />
+
+        {/* Admin routes (wrapped in AdminLayout) */}
+        <Route path="/admin"           element={<ProtectedRoute requireRole="admin"><AdminLayout><AdminDashboardScreen /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/hotels"    element={<ProtectedRoute requireRole="admin"><AdminLayout><AdminHotelsScreen /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/rooms"     element={<ProtectedRoute requireRole="admin"><AdminLayout><AdminRoomsScreen /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/bookings"  element={<ProtectedRoute requireRole="admin"><AdminLayout><AdminBookingsScreen /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/viewings"  element={<ProtectedRoute requireRole="admin"><AdminLayout><AdminViewingsScreen /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/reviews"   element={<ProtectedRoute requireRole="admin"><AdminLayout><AdminReviewsScreen /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/customers" element={<ProtectedRoute requireRole="admin"><AdminLayout><AdminCustomersScreen /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/settings"  element={<ProtectedRoute requireRole="admin"><AdminLayout><AdminSettingsScreen /></AdminLayout></ProtectedRoute>} />
 
         {/* Static editorial pages */}
         <Route path="/about"           element={<AboutScreen />} />
@@ -84,16 +113,15 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="app">
-        <ScrollToTop />
-        <Header theme={theme} setTheme={setTheme} />
-        <MobileNav />
-        <GlobalErrorCapture>
-          <AnimatedRoutes />
-        </GlobalErrorCapture>
-        <Footer />
-        <TweaksPanel tweaks={tweaks} setTweak={setTweak} />
-        <DebugPanel />
-      </div>
+         <ScrollToTop />
+         <Header theme={theme} setTheme={setTheme} />
+         <MobileNav />
+         <GlobalErrorCapture>
+           <AnimatedRoutes />
+         </GlobalErrorCapture>
+         <Footer />
+         <TweaksPanel tweaks={tweaks} setTweak={setTweak} />
+       </div>
     </BrowserRouter>
   );
 }

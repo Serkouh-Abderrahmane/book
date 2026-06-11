@@ -5,7 +5,7 @@
 
 module.exports = [
   {
-    slug:   'marigold-house',
+    slug:   'chi-vinh-house',
     region: 'Rajasthan',
     hero:    "https://images.unsplash.com/photo-1590490360182-c33d57733427?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5NjQ3MDF8MHwxfHNlYXJjaHwxfHxoZXJpdGFnZSUyMGhvdGVsJTIwc3VpdGV8ZW58MXwwfHx8MTc4MDEyMTgwMHww&ixlib=rb-4.1.0&q=80&w=1080", // red throw pillow on white couch — by reisetopia
     gallery: [

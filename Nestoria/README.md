@@ -169,7 +169,7 @@ Every account loaded by `004_seed.sql` uses the password **`password123`** (bcry
 
 | Role | Email | Password |
 |---|---|---|
-| Host | `vikram@marigold.in` | `password123` |
+| Host | `vikram@chivinhland.vn` | `password123` |
 | Host | `priya@casapamparo.in` | `password123` |
 | Host | `arjun@cardamom.in` | `password123` |
 | Customer | `customer1@nestoria.dev` … `customer50@nestoria.dev` | `password123` |

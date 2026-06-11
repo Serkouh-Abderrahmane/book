@@ -1,48 +1,83 @@
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { DEFAULT_FILTERS, PRICE_RANGES, FILTER_PARAM_NAMES, priceRangeToParam } from '../lib/filterConstants.js';
+import { PRICE_RANGES } from '../lib/filterConstants.js';
 
 export function useFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const filters = useMemo(() => ({
-    province: searchParams.get(FILTER_PARAM_NAMES.province) || DEFAULT_FILTERS.province,
-    district: searchParams.get(FILTER_PARAM_NAMES.district) || DEFAULT_FILTERS.district,
-    ward: searchParams.get(FILTER_PARAM_NAMES.ward) || DEFAULT_FILTERS.ward,
-    roomType: searchParams.get(FILTER_PARAM_NAMES.roomType) || DEFAULT_FILTERS.roomType,
-    selectedPriceRanges: parsePriceRanges(searchParams.get(FILTER_PARAM_NAMES.minPrice), searchParams.get(FILTER_PARAM_NAMES.maxPrice)),
-    selectedAmenities: (searchParams.get(FILTER_PARAM_NAMES.amenities) || '').split(',').filter(Boolean),
+    province: searchParams.get('province') || '',
+    district: searchParams.get('district') || '',
+    ward: searchParams.get('ward') || '',
+    roomType: searchParams.get('roomType') || '', // e.g., 'PHONG_TRO', 'CAN_HO', 'CAN_HO::CH_2N1W'
+    priceRangeIds: (searchParams.get('priceRanges') || '').split(',').filter(Boolean),
+    amenities: (searchParams.get('amenities') || '').split(',').filter(Boolean),
   }), [searchParams]);
 
   const setFilters = useCallback((updates) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      const { province, district, ward, roomType, selectedPriceRanges, selectedAmenities } = updates;
 
-      if (province !== undefined) {
-        setOrRemove(next, FILTER_PARAM_NAMES.province, province);
-        if (province !== filters.province) {
-          setOrRemove(next, FILTER_PARAM_NAMES.district, '');
-          setOrRemove(next, FILTER_PARAM_NAMES.ward, '');
+      if (updates.province !== undefined) {
+        if (updates.province) {
+          next.set('province', updates.province);
+        } else {
+          next.delete('province');
+          next.delete('district');
+          next.delete('ward');
+        }
+        // When province changes, clear district and ward
+        if (updates.province !== filters.province) {
+          next.delete('district');
+          next.delete('ward');
         }
       }
-      if (district !== undefined) {
-        setOrRemove(next, FILTER_PARAM_NAMES.district, district);
-        if (district !== filters.district) {
-          setOrRemove(next, FILTER_PARAM_NAMES.ward, '');
+
+      if (updates.district !== undefined) {
+        if (updates.district) {
+          next.set('district', updates.district);
+        } else {
+          next.delete('district');
+          next.delete('ward');
+        }
+        // When district changes, clear ward
+        if (updates.district !== filters.district) {
+          next.delete('ward');
         }
       }
-      if (ward !== undefined) setOrRemove(next, FILTER_PARAM_NAMES.ward, ward);
-      if (roomType !== undefined) setOrRemove(next, FILTER_PARAM_NAMES.roomType, roomType);
 
-      if (selectedPriceRanges !== undefined) {
-        const { minPrice, maxPrice } = priceRangeToParam(selectedPriceRanges);
-        setOrRemove(next, FILTER_PARAM_NAMES.minPrice, minPrice != null ? String(minPrice) : '');
-        setOrRemove(next, FILTER_PARAM_NAMES.maxPrice, maxPrice != null ? String(maxPrice) : '');
+      if (updates.ward !== undefined) {
+        if (updates.ward) {
+          next.set('ward', updates.ward);
+        } else {
+          next.delete('ward');
+        }
       }
-      if (selectedAmenities !== undefined) {
-        setOrRemove(next, FILTER_PARAM_NAMES.amenities, selectedAmenities.join(','));
+
+      if (updates.roomType !== undefined) {
+        if (updates.roomType) {
+          next.set('roomType', updates.roomType);
+        } else {
+          next.delete('roomType');
+        }
       }
+
+      if (updates.priceRangeIds !== undefined) {
+        if (updates.priceRangeIds.length > 0) {
+          next.set('priceRanges', updates.priceRangeIds.join(','));
+        } else {
+          next.delete('priceRanges');
+        }
+      }
+
+      if (updates.amenities !== undefined) {
+        if (updates.amenities.length > 0) {
+          next.set('amenities', updates.amenities.join(','));
+        } else {
+          next.delete('amenities');
+        }
+      }
+
       return next;
     });
   }, [setSearchParams, filters.province, filters.district]);
@@ -50,8 +85,10 @@ export function useFilters() {
   const resetFilters = useCallback(() => {
     setSearchParams((prev) => {
       const next = new URLSearchParams();
+      // Keep non-filter params (e.g., 'location', 'sort')
+      const filterKeys = new Set(['province', 'district', 'ward', 'roomType', 'priceRanges', 'amenities']);
       for (const [k, v] of prev) {
-        if (!Object.values(FILTER_PARAM_NAMES).includes(k)) {
+        if (!filterKeys.has(k)) {
           next.set(k, v);
         }
       }
@@ -65,31 +102,20 @@ export function useFilters() {
     if (filters.district) count++;
     if (filters.ward) count++;
     if (filters.roomType) count++;
-    if (filters.selectedPriceRanges.length) count++;
-    if (filters.selectedAmenities.length) count++;
+    if (filters.priceRangeIds.length) count++;
+    if (filters.amenities.length) count++;
     return count;
   }, [filters]);
 
-  return { filters, setFilters, resetFilters, activeFilterCount };
-}
+  // Helper: convert selected price range IDs to min/max for API
+  const getPriceRange = useCallback(() => {
+    if (filters.priceRangeIds.length === 0) return { min: undefined, max: undefined };
+    const selected = PRICE_RANGES.filter((r) => filters.priceRangeIds.includes(r.id));
+    if (selected.length === 0) return { min: undefined, max: undefined };
+    let min = Math.min(...selected.map((r) => r.min));
+    let max = Math.max(...selected.map((r) => r.max));
+    return { min, max };
+  }, [filters.priceRangeIds]);
 
-function parsePriceRanges(minStr, maxStr) {
-  const min = minStr ? Number(minStr) : undefined;
-  const max = maxStr ? Number(maxStr) : undefined;
-  if (min == null && max == null) return [];
-  return PRICE_RANGES.filter((r) => {
-    const rMin = r.min;
-    const rMax = r.max;
-    if (min != null && max != null) {
-      return rMin >= min && rMax <= max;
-    }
-    if (min != null) return rMax >= min;
-    if (max != null) return rMin <= max;
-    return false;
-  });
-}
-
-function setOrRemove(params, key, value) {
-  if (value) params.set(key, value);
-  else params.delete(key);
+  return { filters, setFilters, resetFilters, activeFilterCount, getPriceRange };
 }

@@ -39,7 +39,7 @@ export default function AboutScreen() {
 
       <section className="reveal" style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: 40, alignItems: 'start', marginBottom: 64 }}>
         <div style={{ aspectRatio: '4/3', borderRadius: 'var(--radius-xl)', overflow: 'hidden', position: 'relative' }}>
-          <Photo hue="forest" src="" alt="The Marigold House" />
+          <Photo hue="forest" src="" alt="Chi Vinh House" />
         </div>
         <div>
           <span className="eyebrow">— Câu chuyện</span>

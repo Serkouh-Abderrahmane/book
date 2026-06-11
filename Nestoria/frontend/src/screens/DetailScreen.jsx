@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 
 import Photo from '../components/Photo.jsx';
 import Icon from '../components/Icon.jsx';
-import Stepper from '../components/Stepper.jsx';
 import HotelMap from '../components/HotelMap.jsx';
 import { SkeletonDetail } from '../components/Skeleton.jsx';
 import { hotelsAPI } from '../lib/api.js';
@@ -12,37 +11,115 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useSavedHotels } from '../hooks/useSavedHotels.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 
-const ORIENTATIONS = {
-  Đ: { full: 'Hướng Đông', emoji: '🌅', desc: 'Đón nắng sáng' },
-  T: { full: 'Hướng Tây', emoji: '🌇', desc: 'Chiều đẹp nhất' },
-  N: { full: 'Hướng Nam', emoji: '☀️', desc: 'Mát mẻ quanh năm' },
-  B: { full: 'Hướng Bắc', emoji: '❄️', desc: 'Tránh nắng gắt' },
-  ĐB: { full: 'Hướng Đông Bắc', emoji: '🌤️', desc: 'Sáng mát nhẹ' },
-  ĐN: { full: 'Hướng Đông Nam', emoji: '🌥️', desc: 'Đón gió biển' },
-  TB: { full: 'Hướng Tây Bắc', emoji: '⛅', desc: 'Chiều lộng gió' },
-  TN: { full: 'Hướng Tây Nam', emoji: '🌆', desc: 'Hoàng hôn đẹp' },
-};
-
 const FMT = (n) => Number(n).toLocaleString('vi-VN');
 
-function Rating({ value, size = 13 }) {
-  return (
-    <span className="dr-rating">
-      <Icon name="star" size={size} />
-      <span>{Number(value).toFixed(1)}</span>
-    </span>
-  );
+
+
+const ROOM_AMENITIES = [
+  { key: 'bed',      label: 'Giường',      icon: 'bed' },
+  { key: 'mattress', label: 'Nệm',         icon: 'moon' },
+  { key: 'wardrobe', label: 'Tủ quần áo',  icon: 'grid' },
+  { key: 'elevator', label: 'Thang máy',   icon: 'arrow-up-right' },
+  { key: 'wifi',     label: 'Wifi',        icon: 'wifi' },
+  { key: 'ac',       label: 'Máy lạnh',    icon: 'ac' },
+  { key: 'kitchen',  label: 'Kệ bếp',      icon: 'utensils' },
+  { key: 'hotwater', label: 'Nước nóng',   icon: 'sun' },
+  { key: 'fridge',   label: 'Tủ lạnh',     icon: 'coffee' },
+  { key: 'loft',     label: 'Gác',         icon: 'home' },
+];
+
+const COST_ITEMS = [
+  { key: 'electricity', label: 'Điện sinh hoạt', icon: 'sparkle', unit: 'kWh' },
+  { key: 'water',       label: 'Nước sinh hoạt', icon: 'wind',    unit: 'ng' },
+  { key: 'management',  label: 'Phí quản lý',    icon: 'shield',  unit: 'ph' },
+  { key: 'parking',     label: 'Giữ xe máy',     icon: 'car',     unit: '' },
+  { key: 'window',      label: 'Cửa sổ',         icon: 'maximize', unit: '' },
+  { key: 'mattress',    label: 'Nệm ngủ sẵn',    icon: 'moon',    unit: '' },
+];
+
+const EQUIPMENT_ITEMS = [
+  { key: 'toilet',      label: 'Toilet' },
+  { key: 'hours',       label: 'Giờ giấc' },
+  { key: 'washing',     label: 'Máy giặt' },
+  { key: 'window',      label: 'Cửa sổ' },
+  { key: 'balcony',     label: 'Ban công' },
+  { key: 'pets',        label: 'Thú cưng' },
+  { key: 'parking',     label: 'Sân xe' },
+  { key: 'charger',     label: 'Sạc xe điện' },
+];
+
+function hasAmenity(room, hotel, key) {
+  if (!room && !hotel) return false;
+
+  if (room?.special_amenities && typeof room.special_amenities === 'string') {
+    const tags = room.special_amenities.split(',').map((s) => s.trim().toLowerCase());
+    const map = {
+      bed: ['giường', 'bed'],
+      mattress: ['nệm', 'mattress', 'đệm'],
+      wardrobe: ['tủ quần áo', 'wardrobe', 'tủ áo', 'tủ'],
+      elevator: ['thang máy', 'elevator', 'lift'],
+      wifi: ['wifi', 'wi-fi', 'internet'],
+      ac: ['máy lạnh', 'ac', 'điều hòa', 'aircon', 'air conditioner'],
+      kitchen: ['kệ bếp', 'bếp', 'kitchen', 'nhà bếp'],
+      hotwater: ['nước nóng', 'hot water', 'bình nóng lạnh'],
+      fridge: ['tủ lạnh', 'fridge', 'refrigerator'],
+      loft: ['gác', 'loft', 'gác lửng'],
+    };
+    const keywords = map[key] || [key];
+    return keywords.some((kw) => tags.some((t) => t.includes(kw)));
+  }
+
+  if (hotel?.amenities && Array.isArray(hotel.amenities)) {
+    const hotelKeys = hotel.amenities.map((a) => a.key);
+    if (key === 'wifi' && hotelKeys.includes('wifi')) return true;
+    if (key === 'ac' && (hotelKeys.includes('ac') || hotelKeys.includes('aircon'))) return true;
+  }
+
+  return false;
 }
 
-function InfoCard({ icon, label, value }) {
-  if (!value || value === '—') return null;
-  return (
-    <div className="dr-infocard">
-      <div className="dr-infocard-icon"><Icon name={icon} size={17} /></div>
-      <div className="dr-infocard-label">{label}</div>
-      <div className="dr-infocard-value">{value}</div>
-    </div>
-  );
+function getCostValue(room, hotel, key) {
+  const r = room || {};
+  const h = hotel || {};
+  switch (key) {
+    case 'electricity': return r.electricity_price ?? h.electricity_price;
+    case 'water':       return r.water_price ?? h.water_price;
+    case 'management':  return r.management_fee ?? h.management_fee;
+    case 'parking':     return r.parking_fee ?? h.parking_fee;
+    case 'window':      return r.has_window ?? h.has_window;
+    case 'mattress':    return r.has_mattress ?? h.has_mattress;
+    default: return null;
+  }
+}
+
+function formatCostValue(value, unit) {
+  if (value === null || value === undefined) return '—';
+  if (typeof value === 'boolean') return value ? 'Có' : 'Không';
+  if (value === 0 || value === '0') return 'Miễn phí';
+  const num = Number(value);
+  if (!isNaN(num)) {
+    if (unit === 'kWh') return `${num}k/kWh`;
+    if (unit === 'ng') return `${num}k/ng`;
+    if (unit === 'ph') return `${num}k/ph`;
+    return `${FMT(num)}₫`;
+  }
+  return String(value);
+}
+
+function getEquipmentValue(room, hotel, key) {
+  const r = room || {};
+  const h = hotel || {};
+  switch (key) {
+    case 'toilet':   return r.toilet_type ?? h.toilet_type ?? 'Riêng';
+    case 'hours':    return r.hour_rule ?? h.hour_rule ?? 'Tự do';
+    case 'washing':  return r.washing_machine ?? h.washing_machine ?? 'Chung';
+    case 'window':   return r.has_window ?? h.has_window ? 'Có' : 'Không';
+    case 'balcony':  return r.has_balcony ?? h.has_balcony ? 'Có' : 'Không';
+    case 'pets':     return r.allow_pets ?? h.allow_pets ? 'Có' : 'Không';
+    case 'parking':  return r.parking_type ?? h.parking_type ?? 'Chung';
+    case 'charger':  return r.ev_charger ?? h.ev_charger ? 'Có' : 'Không';
+    default: return '—';
+  }
 }
 
 export default function DetailScreen() {
@@ -52,7 +129,20 @@ export default function DetailScreen() {
   const { user } = useAuth();
   const { isSaved, toggle: toggleSave } = useSavedHotels();
   const [shareLabel, setShareLabel] = useState('Chia sẻ');
-  const [reserveError, setReserveError] = useState(null);
+  const [currentImage, setCurrentImage] = useState(0);
+  const [showForm, setShowForm] = useState(false);
+  const [otherOpen, setOtherOpen] = useState(true);
+
+  const [form, setForm] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    date: '',
+    time: '',
+    note: '',
+  });
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formError, setFormError] = useState('');
 
   const onSave = (id) => {
     if (!user) {
@@ -78,16 +168,25 @@ export default function DetailScreen() {
     }
   };
 
-  const today    = new Date();
-  const inDate   = new Date(today.getTime() + 14 * 86400000).toISOString().slice(0, 10);
-  const outDate  = new Date(today.getTime() + 17 * 86400000).toISOString().slice(0, 10);
+  const handleFormChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormError('');
+    setFormSubmitted(false);
+  };
 
-  const [checkin, setCheckin]       = useState(inDate);
-  const [checkout, setCheckout]     = useState(outDate);
-  const [guests, setGuests]         = useState(2);
-  const [rooms, setRooms]           = useState(1);
-  const [selectedRoomId, setSelectedRoomId] = useState(null);
-  const [currentImage, setCurrentImage]     = useState(0);
+  const submitAppointment = (e) => {
+    e.preventDefault();
+    if (!form.phone.trim()) {
+      setFormError('Vui lòng nhập số điện thoại để chúng tôi liên hệ.');
+      return;
+    }
+    if (!form.date || !form.time) {
+      setFormError('Vui lòng chọn ngày và giờ xem phòng.');
+      return;
+    }
+    setFormSubmitted(true);
+    setFormError('');
+  };
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['hotel', slug],
@@ -108,320 +207,375 @@ export default function DetailScreen() {
   const hotel = data;
   const gallery = [hotel.hero_image_url, ...(hotel.gallery || []).map((g) => g.url)].filter(Boolean);
   const baseRoom = hotel.rooms?.[0];
-  const nights = Math.max(1, Math.round((new Date(checkout) - new Date(checkin)) / 86400000));
-  const subtotal = baseRoom ? baseRoom.price_per_night * nights * rooms : 0;
-  const taxes    = Math.round(subtotal * 0.18);
-  const total    = subtotal + taxes;
 
-  const reserve = (roomId = selectedRoomId || baseRoom?.id) => {
-    if (user?.role === 'host') {
-      setReserveError("Chủ nhà không thể thuê nhà. Hãy đăng xuất và sử dụng tài khoản người thuê để đặt nhà.");
-      return;
-    }
-    setReserveError(null);
-    const params = new URLSearchParams();
-    params.set('room',     roomId);
-    params.set('hotel',    hotel.slug);
-    params.set('checkin',  checkin);
-    params.set('checkout', checkout);
-    params.set('guests',   guests);
-    const target = `/booking?${params.toString()}`;
-    if (!user) { navigate(`/login?next=${encodeURIComponent(target)}`); return; }
-    navigate(target);
-  };
+  const today = new Date();
+  const minDate = today.toISOString().slice(0, 10);
 
-  const orientationKey = hotel.orientation || hotel.facing || hotel.balcony_direction;
-  const orientation = orientationKey ? ORIENTATIONS[orientationKey] || { full: `Hướng ${orientationKey}`, emoji: '🧭', desc: '' } : null;
-
-  const infoRows = [
-    { icon: 'home', label: 'Loại nhà', value: baseRoom?.type || hotel.hotel_type || '—' },
-    { icon: 'maximize', label: 'Diện tích', value: baseRoom?.size_sqm ? `${baseRoom.size_sqm} m²` : '—' },
-    { icon: 'bed', label: 'Phòng ngủ', value: baseRoom?.beds || '—' },
-    { icon: 'users', label: 'Sức chứa', value: baseRoom?.max_guests || '—' },
-    { icon: 'calendar', label: 'Nhận phòng', value: String(hotel.checkin_time || '07:00').slice(0, 5) },
-    { icon: 'calendar', label: 'Trả phòng', value: String(hotel.checkout_time || '22:00').slice(0, 5) },
-  ];
+  const otherRooms = (hotel.rooms || []).filter((r) => r.id !== baseRoom?.id);
 
   return (
-    <div className="dr-root">
-      {/* ==================== HERO ==================== */}
-      <section className="dr-hero">
-        {gallery.map((src, i) => (
-          <div key={i} className={`dr-hero-slide ${i === currentImage ? 'is-active' : ''}`}>
-            <Photo src={src} hue={hotel.hue} />
-          </div>
-        ))}
-
-        <div className="dr-hero-overlay" />
-
-        <div className="dr-hero-top">
-          <button className="dr-hero-back" onClick={() => navigate('/')}>
-            <Icon name="chevron-left" size={18} />
-          </button>
-          <div className="dr-hero-top-right">
-            <button className="dr-hero-btn" onClick={() => onSave(hotel.id)} aria-pressed={isSaved(hotel.id)}>
-              <Icon name={isSaved(hotel.id) ? 'heart-fill' : 'heart'} size={17} />
+    <div className="vi-root">
+      {/* ==================== 1. HEADER ==================== */}
+      <div className="container-wide">
+        <header className="vi-header">
+          <div className="vi-header-top">
+            <button className="vi-back" onClick={() => navigate(-1)}>
+              <Icon name="chevron-left" size={18} />
             </button>
-            <button className="dr-hero-btn" onClick={() => share(hotel)}>
-              <Icon name="arrow-up-right" size={17} />
-            </button>
-          </div>
-        </div>
-
-        <div className="dr-hero-info">
-          <div className="dr-hero-tags">
-            {hotel.badge && <span className="tag">{hotel.badge}</span>}
-            <span className="dr-hero-region">{hotel.hotel_type || hotel.region}</span>
-          </div>
-          <h1 className="dr-hero-title">{hotel.name}</h1>
-          <div className="dr-hero-meta">
-            <span><Icon name="pin" size={12} /> {hotel.address || `${hotel.city}, ${hotel.region}`}</span>
-            {hotel.rating_avg > 0 && <Rating value={hotel.rating_avg} />}
-            <span className="dr-hero-review-count">({hotel.rating_count} đánh giá)</span>
-          </div>
-        </div>
-
-        <div className="dr-hero-counter">{currentImage + 1}/{gallery.length}</div>
-
-        {gallery.length > 1 && (
-          <div className="dr-hero-thumbs">
-            {gallery.map((src, i) => (
-              <button key={i} className={`dr-thumb ${i === currentImage ? 'is-active' : ''}`} onClick={() => setCurrentImage(i)}>
-                <Photo src={src} hue={hotel.hue} />
+            <div className="vi-header-actions">
+              <button className="vi-header-btn" onClick={() => onSave(hotel.id)} aria-pressed={isSaved(hotel.id)}>
+                <Icon name={isSaved(hotel.id) ? 'heart-fill' : 'heart'} size={17} />
               </button>
+              <button className="vi-header-btn" onClick={() => share(hotel)}>
+                <Icon name="arrow-up-right" size={17} />
+              </button>
+            </div>
+          </div>
+          <div className="vi-header-info">
+            <h1 className="vi-title">{hotel.name}</h1>
+            {(baseRoom?.property_type || hotel.property_type) && (
+              <span className="property-badge-detail" style={{ fontSize: 11 }}>
+                {baseRoom?.property_type || hotel.property_type}
+              </span>
+            )}
+            <div className="vi-location">
+              <Icon name="pin" size={13} />
+              <span>{hotel.address || `${hotel.city}, ${hotel.region}`}</span>
+            </div>
+            <div className="vi-header-meta">
+              <span className="vi-price-badge">
+                <span className="vi-price-val">{FMT(baseRoom?.price_per_night || hotel.price_from || 0)}₫</span>
+                <span className="vi-price-unit">/tháng</span>
+              </span>
+              <span className="vi-status-badge">
+                <span className="vi-status-dot" />
+                {(baseRoom?.status === 'unavailable') ? 'Đã thuê' : 'Còn phòng'}
+              </span>
+              {(hotel.badge || hotel.verified) && (
+                <span className="vi-verified-badge">
+                  <Icon name="shield" size={12} />
+                  Đã xác thực
+                </span>
+              )}
+            </div>
+          </div>
+        </header>
+      </div>
+
+      {/* ==================== 2. IMAGE GALLERY ==================== */}
+      <section className="container-wide">
+        <div className="vi-gallery">
+          <div className="vi-gallery-main">
+            {gallery.map((src, i) => (
+              <div key={i} className={`vi-gallery-slide ${i === currentImage ? 'is-active' : ''}`}>
+                <Photo src={src} hue={hotel.hue} />
+              </div>
             ))}
           </div>
-        )}
+          <div className="vi-gallery-counter">{currentImage + 1}/{gallery.length}</div>
+          {gallery.length > 1 && (
+            <div className="vi-gallery-thumbs">
+              {gallery.map((src, i) => (
+                <button key={i} className={`vi-thumb ${i === currentImage ? 'is-active' : ''}`} onClick={() => setCurrentImage(i)}>
+                  <Photo src={src} hue={hotel.hue} />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
 
-      {/* ==================== SHELL ==================== */}
-      <div className="dr-shell container-wide">
-        <main className="dr-main">
-          {/* OVERVIEW */}
-          <section className="dr-section">
-            <h2 className="dr-section-title">Tổng quan</h2>
-            <div className="dr-infogrid">
-              {infoRows.map((item) => <InfoCard key={item.label} {...item} />)}
-              {hotel.host_name && (
-                <div className="dr-infocard dr-infocard--host">
-                  <div className="dr-infocard-icon"><Icon name="user" size={17} /></div>
-                  <div className="dr-infocard-label">Chủ nhà</div>
-                  <div className="dr-infocard-value">{hotel.host_business || hotel.host_name}</div>
+      {/* ==================== MAIN + SIDEBAR WRAPPER ==================== */}
+      <div className="vi-shell container-wide">
+        <main className="vi-main">
+
+          {/* 3. ROOM AMENITIES — Tiện ích phòng trọ */}
+          <section className="vi-section">
+            <h2 className="vi-section-title">Tiện ích phòng trọ</h2>
+            <div className="vi-amenity-grid">
+              {ROOM_AMENITIES.map((a) => {
+                const on = hasAmenity(baseRoom, hotel, a.key);
+                return (
+                  <div key={a.key} className={`vi-amenity-chip ${on ? 'is-on' : 'is-off'}`}>
+                    <span className="vi-amenity-chip-icon">
+                      <Icon name={a.icon} size={15} />
+                    </span>
+                    <span className="vi-amenity-chip-label">{a.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* 4. DETAILED DESCRIPTION — Mô tả chi tiết */}
+          <section className="vi-section">
+            <h2 className="vi-section-title">Mô tả chi tiết</h2>
+            <div className="vi-desc-card">
+              <h3 className="vi-desc-title">
+                {hotel.city || hotel.region} – {baseRoom?.type || hotel.hotel_type || 'PHÙ HỢP GIA ĐÌNH'}
+              </h3>
+              <div className="vi-desc-body">
+                <div className="vi-desc-block">
+                  <strong>Vị trí:</strong>
+                  <ul>
+                    <li>{hotel.address || `${hotel.ward ? hotel.ward + ', ' : ''}${hotel.district ? hotel.district + ', ' : ''}${hotel.city || hotel.region || 'Đang cập nhật'}`}</li>
+                  </ul>
+                </div>
+                <div className="vi-desc-block">
+                  <strong>Tiện ích xung quanh:</strong>
+                  <ul>
+                    {hotel.nearby_places ? (
+                      String(hotel.nearby_places).split(',').map((p, i) => <li key={i}>{p.trim()}</li>)
+                    ) : (
+                      <li>Gần chợ, siêu thị, trường học, bệnh viện — đầy đủ tiện ích sinh hoạt</li>
+                    )}
+                  </ul>
+                </div>
+                <div className="vi-desc-block">
+                  <strong>Thực tế:</strong>
+                  <ul>
+                    {hotel.road_type && <li>Đường {hotel.road_type}</li>}
+                    {hotel.neighborhood && <li>Khu {hotel.neighborhood}</li>}
+                    <li>An ninh tốt, dân trí cao</li>
+                    <li>Gần trường học, chợ dân sinh</li>
+                  </ul>
+                </div>
+              </div>
+              {hotel.description && (
+                <div className="vi-desc-note">
+                  {hotel.description.split('\n').filter(Boolean).map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
                 </div>
               )}
             </div>
           </section>
 
-          {/* DESCRIPTION */}
-          {hotel.description && (
-            <section className="dr-section">
-              <h2 className="dr-section-title">Mô tả</h2>
-              <div className="dr-desc">
-                <p>{hotel.description}</p>
-              </div>
-            </section>
-          )}
-
-          {/* ORIENTATION */}
-          {orientation && (
-            <section className="dr-section">
-              <h2 className="dr-section-title">
-                <Icon name="compass" size={16} /> Hướng nhà
-              </h2>
-              <div className="dr-orientation">
-                <div className="dr-orientation-badge">
-                  <span className="dr-orientation-emoji">{orientation.emoji}</span>
-                  <span className="dr-orientation-name">{orientation.full}</span>
-                </div>
-                {orientation.desc && <p className="dr-orientation-desc">{orientation.desc}</p>}
-              </div>
-            </section>
-          )}
-
-          {/* AMENITIES */}
-          {(hotel.amenities || []).length > 0 && (
-            <section className="dr-section">
-              <h2 className="dr-section-title">Tiện nghi</h2>
-              <div className="dr-amenities">
-                {hotel.amenities.map((a) => (
-                  <div className="dr-amenity" key={a.key}>
-                    <span className="dr-amenity-icon"><Icon name={a.icon} size={16} /></span>
-                    <span>{a.label}</span>
+          {/* 5. COSTS & CONDITIONS — Chi phí & Điều kiện */}
+          <section className="vi-section">
+            <h2 className="vi-section-title">Chi phí & Điều kiện</h2>
+            <div className="vi-cost-grid">
+              {COST_ITEMS.map((c) => {
+                const val = getCostValue(baseRoom, hotel, c.key);
+                return (
+                  <div key={c.key} className="vi-cost-card">
+                    <div className="vi-cost-card-icon"><Icon name={c.icon} size={16} /></div>
+                    <div className="vi-cost-card-label">{c.label}</div>
+                    <div className="vi-cost-card-value">{formatCostValue(val, c.unit)}</div>
                   </div>
-                ))}
-              </div>
-            </section>
-          )}
+                );
+              })}
+            </div>
+          </section>
 
-          {/* LOCATION */}
-          <section className="dr-section">
-            <h2 className="dr-section-title">Vị trí</h2>
-            <div className="dr-map-card">
+          {/* 6. EQUIPMENT DETAILS — Chi tiết trang thiết bị */}
+          <section className="vi-section">
+            <h2 className="vi-section-title">Chi tiết trang thiết bị</h2>
+            <div className="vi-equip-grid">
+              {EQUIPMENT_ITEMS.map((e) => {
+                const val = getEquipmentValue(baseRoom, hotel, e.key);
+                return (
+                  <div key={e.key} className="vi-equip-row">
+                    <span className="vi-equip-label">{e.label}</span>
+                    <span className="vi-equip-value">{val}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* 7. LOCATION */}
+          <section className="vi-section">
+            <h2 className="vi-section-title">Vị trí</h2>
+            <div className="vi-map-card">
               {hotel.latitude != null && hotel.longitude != null ? (
-                <HotelMap lat={hotel.latitude} lng={hotel.longitude} label={hotel.name} height={240} />
+                <HotelMap lat={hotel.latitude} lng={hotel.longitude} label={hotel.name} height={200} />
               ) : (
-                <div className="dr-map-placeholder">
-                  <Icon name="map" size={28} />
+                <div className="vi-map-placeholder">
+                  <Icon name="map" size={24} />
                   <p>Không có bản đồ</p>
                 </div>
               )}
-              <div className="dr-map-footer">
-                <div className="dr-map-address">
-                  <Icon name="pin" size={14} />
+              <div className="vi-map-footer">
+                <div className="vi-map-address">
+                  <Icon name="pin" size={13} />
                   <span>{hotel.address || `${hotel.city}, ${hotel.region}`}</span>
                 </div>
                 {hotel.latitude != null && (
-                  <a href={`https://www.openstreetmap.org/?mlat=${hotel.latitude}&mlon=${hotel.longitude}#map=15/${hotel.latitude}/${hotel.longitude}`} target="_blank" rel="noreferrer" className="dr-map-link">
-                    Xem bản đồ lớn <Icon name="arrow-up-right" size={11} />
+                  <a href={`https://www.openstreetmap.org/?mlat=${hotel.latitude}&mlon=${hotel.longitude}#map=15/${hotel.latitude}/${hotel.longitude}`} target="_blank" rel="noreferrer" className="vi-map-link">
+                    Xem bản đồ lớn <Icon name="arrow-up-right" size={10} />
                   </a>
                 )}
               </div>
             </div>
           </section>
 
-          {/* REVIEWS */}
-          <section className="dr-section">
-            <h2 className="dr-section-title">
-              Đánh giá
-              {hotel.rating_avg > 0 && <span className="dr-section-badge">{Number(hotel.rating_avg).toFixed(1)}</span>}
-            </h2>
-
-            {(hotel.reviews || []).length > 0 && (
-              <div className="dr-rating-bar">
-                <div className="dr-rating-stars">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <Icon key={s} name="star" size={15} style={{ color: s <= Math.round(hotel.rating_avg || 0) ? 'var(--accent)' : 'var(--line-strong)' }} />
+          {/* 8. OTHER AVAILABLE ROOMS — Danh sách phòng trống khác */}
+          <section className="vi-section">
+            <button className="vi-other-toggle" onClick={() => setOtherOpen(!otherOpen)} aria-expanded={otherOpen}>
+              <span className="vi-section-title" style={{ margin: 0 }}>
+                Danh sách phòng trống khác ({otherRooms.length})
+              </span>
+              <Icon name={otherOpen ? 'chevron-down' : 'chevron-right'} size={16} />
+            </button>
+            {otherOpen && (
+              otherRooms.length > 0 ? (
+                <div className="vi-other-grid">
+                  {otherRooms.slice(0, 4).map((r) => (
+                    <div className="vi-other-card" key={r.id}>
+                      <div className="vi-other-img">
+                        <Photo src={r.image_url} hue={r.hue} />
+                      </div>
+                      <div className="vi-other-body">
+                        <h3 className="vi-other-name">{r.name || r.type}</h3>
+                        <div className="vi-other-meta">
+                          <span>{r.size_sqm && `${r.size_sqm} m²`}</span>
+                          <span className="vi-other-price">{FMT(r.price_per_night)}₫/tháng</span>
+                        </div>
+                        <button className="vi-other-view" onClick={() => navigate(`/hotel/${hotel.slug}?room=${r.id}`)}>
+                          Xem chi tiết <Icon name="arrow-right" size={11} />
+                        </button>
+                      </div>
+                    </div>
                   ))}
                 </div>
-                <span className="text-muted" style={{ fontSize: 13 }}>{hotel.rating_count} đánh giá đã xác thực</span>
-              </div>
+              ) : (
+                <p className="vi-other-empty">Không có phòng trống khác.</p>
+              )
             )}
-
-            <div className="dr-reviews">
-              {(hotel.reviews || []).slice(0, 4).map((rv) => (
-                <div className="dr-review" key={rv.id}>
-                  <div className="dr-review-head">
-                    <span className="dr-review-avatar">{rv.customer_name?.[0] || '·'}</span>
-                    <div>
-                      <div className="dr-review-name">{rv.customer_name}</div>
-                      <div className="dr-review-date">{new Date(rv.created_at).toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' })}</div>
-                    </div>
-                    <Rating value={rv.rating} size={11} />
-                  </div>
-                  <p className="dr-review-text">"{rv.comment}"</p>
-                </div>
-              ))}
-              {(!hotel.reviews || hotel.reviews.length === 0) && (
-                <p className="text-muted" style={{ fontSize: 14 }}>Chưa có đánh giá nào.</p>
-              )}
-            </div>
           </section>
-
-          {/* ROOMS */}
-          {(hotel.rooms || []).length > 0 && (
-            <section className="dr-section">
-              <h2 className="dr-section-title">Phòng trống</h2>
-              <div className="dr-roomgrid">
-                {hotel.rooms.map((r) => (
-                  <div className="dr-room" key={r.id}>
-                    <div className="dr-room-img">
-                      <Photo hue={r.hue} src={r.image_url} />
-                      <div className="dr-room-price">
-                        <span className="dr-room-price-val">{FMT(r.price_per_night)}₫</span>
-                        <span className="dr-room-price-unit">/tháng</span>
-                      </div>
-                    </div>
-                    <div className="dr-room-body">
-                      <h3 className="dr-room-name">{r.name || r.type}</h3>
-                      <div className="dr-room-meta">
-                        <span>{r.size_sqm && `${r.size_sqm} m²`}</span>
-                        <span>{r.beds && `${r.beds}`}</span>
-                        <span>{r.view}</span>
-                      </div>
-                      <div className="dr-room-chips">
-                        {(r.special_amenities ? String(r.special_amenities).split(',').map((s) => s.trim()).filter(Boolean) : []).slice(0, 3).map((a) => (
-                          <span key={a} className="chip">{a}</span>
-                        ))}
-                        <span className="chip">Hủy miễn phí</span>
-                      </div>
-                      <button className="dr-room-cta" onClick={() => { setSelectedRoomId(r.id); reserve(r.id); }}>
-                        Thuê ngay <Icon name="arrow-right" size={12} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
         </main>
 
-        {/* ============ BOOKING ASIDE ============ */}
-        <aside className="dr-aside">
-          <div className="dr-book">
-            <div className="dr-book-header">
-              <div className="dr-book-price">
-                <span className="dr-book-price-val">{FMT(baseRoom?.price_per_night || hotel.price_from || 0)}₫</span>
-                <span className="dr-book-price-unit">/ tháng</span>
+        {/* ==================== VIEWING APPOINTMENT FORM (SIDEBAR) ==================== */}
+        <aside className="vi-aside">
+          <div className="vi-appointment">
+            <div className="vi-appt-header">
+              <h3 className="vi-appt-title">Đặt lịch xem phòng</h3>
+              <p className="vi-appt-sub">Chọn ngày và giờ phù hợp, chúng tôi sẽ liên hệ xác nhận.</p>
+            </div>
+            {formSubmitted ? (
+              <div className="vi-appt-success">
+                <div className="vi-appt-success-icon"><Icon name="check" size={28} /></div>
+                <h4>Yêu cầu đã gửi!</h4>
+                <p>Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để xác nhận lịch xem phòng.</p>
+                <button className="vi-appt-reset" onClick={() => { setFormSubmitted(false); setForm({ name: '', phone: '', email: '', date: '', time: '', note: '' }); }}>
+                  Gửi yêu cầu khác
+                </button>
               </div>
-              {hotel.rating_avg > 0 && (
-                <div className="dr-book-rating">
-                  <Icon name="star" size={13} />
-                  {Number(hotel.rating_avg).toFixed(1)}
-                </div>
-              )}
-            </div>
-
-            <div className="dr-book-micro">
-              <span><Icon name="check" size={12} /> Hủy miễn phí</span>
-              <span><Icon name="shield" size={12} /> Xác nhận ngay</span>
-            </div>
-
-            <div className="dr-book-dates">
-              <div className="dr-book-date">
-                <label>Nhận phòng</label>
-                <input type="date" value={checkin} onChange={(e) => setCheckin(e.target.value)} />
-              </div>
-              <div className="dr-book-date-arr"><Icon name="arrow-right" size={13} /></div>
-              <div className="dr-book-date">
-                <label>Trả phòng</label>
-                <input type="date" value={checkout} onChange={(e) => setCheckout(e.target.value)} />
-              </div>
-            </div>
-
-            <div className="dr-book-steppers">
-              <Stepper label="Khách" value={guests} min={1} max={8} onChange={setGuests} />
-              <hr className="divider" />
-              <Stepper label="Phòng" value={rooms} min={1} max={4} onChange={setRooms} />
-            </div>
-
-            <div className="dr-book-summary">
-              <div className="dr-book-row"><span>{FMT(baseRoom?.price_per_night || 0)}₫ × {nights} tháng</span><span>{FMT(subtotal)}₫</span></div>
-              <div className="dr-book-row"><span>Thuế & phí</span><span>{FMT(taxes)}₫</span></div>
-              <div className="dr-book-row dr-book-row--total"><span>Tổng cộng</span><span>{FMT(total)}₫</span></div>
-            </div>
-
-            <button className="dr-book-cta" onClick={() => reserve()}>
-              Đặt ngay <Icon name="arrow-right" size={15} />
-            </button>
-            {reserveError ? (
-              <p className="dr-book-error">{reserveError}</p>
             ) : (
-              <p className="dr-book-note">Bạn chưa bị tính phí.</p>
+              <form className="vi-appt-form" onSubmit={submitAppointment}>
+                <div className="vi-field">
+                  <label htmlFor="appt-name">Họ và tên</label>
+                  <input id="appt-name" name="name" value={form.name} onChange={handleFormChange} placeholder="Nhập họ và tên" />
+                </div>
+                <div className="vi-field">
+                  <label htmlFor="appt-phone">Số điện thoại <span className="vi-required">*</span></label>
+                  <input id="appt-phone" name="phone" value={form.phone} onChange={handleFormChange} placeholder="Nhập số điện thoại" type="tel" required />
+                </div>
+                <div className="vi-field">
+                  <label htmlFor="appt-email">Email (không bắt buộc)</label>
+                  <input id="appt-email" name="email" value={form.email} onChange={handleFormChange} placeholder="Nhập email" type="email" />
+                </div>
+                <div className="vi-field-row">
+                  <div className="vi-field">
+                    <label htmlFor="appt-date">Ngày xem <span className="vi-required">*</span></label>
+                    <input id="appt-date" name="date" value={form.date} onChange={handleFormChange} type="date" min={minDate} required />
+                  </div>
+                  <div className="vi-field">
+                    <label htmlFor="appt-time">Giờ xem <span className="vi-required">*</span></label>
+                    <input id="appt-time" name="time" value={form.time} onChange={handleFormChange} type="time" required />
+                  </div>
+                </div>
+                <div className="vi-field">
+                  <label htmlFor="appt-note">Ghi chú (không bắt buộc)</label>
+                  <textarea id="appt-note" name="note" value={form.note} onChange={handleFormChange} placeholder="VD: Tôi rảnh sau 6 giờ chiều" rows={2} />
+                </div>
+                {formError && <p className="vi-appt-error">{formError}</p>}
+                <button type="submit" className="vi-appt-cta">
+                  <Icon name="calendar" size={15} />
+                  Đặt lịch xem phòng
+                </button>
+                <p className="vi-appt-note">
+                  <Icon name="lock" size={11} />
+                  Miễn phí • Không yêu cầu thanh toán
+                </p>
+              </form>
             )}
           </div>
         </aside>
       </div>
 
       {/* ==================== MOBILE BOTTOM BAR ==================== */}
-      <div className="reserve-bar" role="region" aria-label="Thuê nhà">
+      <div className="vi-bar" role="region" aria-label="Đặt lịch xem phòng">
         <div>
-          <span className="dr-bar-price">{FMT(baseRoom?.price_per_night || hotel.price_from || 0)}₫<span className="text-muted" style={{ fontSize: 12, marginLeft: 4 }}>/tháng</span></span>
-          <span className="text-muted" style={{ fontSize: 12, display: 'block' }}>{FMT(total)}₫ tổng cộng</span>
+          <span className="vi-bar-price">{FMT(baseRoom?.price_per_night || hotel.price_from || 0)}₫<span className="text-muted" style={{ fontSize: 12, marginLeft: 4 }}>/tháng</span></span>
         </div>
-        <button className="dr-bar-cta" onClick={() => reserve()}>
-          Đặt ngay <Icon name="arrow-right" size={14} />
+        <button className="vi-bar-cta" onClick={() => setShowForm(true)}>
+          <Icon name="calendar" size={14} />
+          Đặt lịch xem phòng
         </button>
       </div>
+
+      {/* ==================== MOBILE FORM SHEET ==================== */}
+      {showForm && (
+        <div className="vi-sheet-overlay" onClick={() => setShowForm(false)}>
+          <div className="vi-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="vi-sheet-handle" />
+            <div className="vi-sheet-header">
+              <h3>Đặt lịch xem phòng</h3>
+              <button className="vi-sheet-close" onClick={() => setShowForm(false)}><Icon name="x" size={18} /></button>
+            </div>
+            {formSubmitted ? (
+              <div className="vi-appt-success">
+                <div className="vi-appt-success-icon"><Icon name="check" size={28} /></div>
+                <h4>Yêu cầu đã gửi!</h4>
+                <p>Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để xác nhận lịch xem phòng.</p>
+                <button className="vi-appt-reset" onClick={() => { setFormSubmitted(false); setForm({ name: '', phone: '', email: '', date: '', time: '', note: '' }); setShowForm(false); }}>
+                  Đóng
+                </button>
+              </div>
+            ) : (
+              <form className="vi-appt-form" onSubmit={(e) => { submitAppointment(e); if (!formError) setTimeout(() => setShowForm(false), 500); }}>
+                <div className="vi-field">
+                  <label htmlFor="m-name">Họ và tên</label>
+                  <input id="m-name" name="name" value={form.name} onChange={handleFormChange} placeholder="Nhập họ và tên" />
+                </div>
+                <div className="vi-field">
+                  <label htmlFor="m-phone">Số điện thoại <span className="vi-required">*</span></label>
+                  <input id="m-phone" name="phone" value={form.phone} onChange={handleFormChange} placeholder="Nhập số điện thoại" type="tel" required />
+                </div>
+                <div className="vi-field">
+                  <label htmlFor="m-email">Email (không bắt buộc)</label>
+                  <input id="m-email" name="email" value={form.email} onChange={handleFormChange} placeholder="Nhập email" type="email" />
+                </div>
+                <div className="vi-field-row">
+                  <div className="vi-field">
+                    <label htmlFor="m-date">Ngày xem <span className="vi-required">*</span></label>
+                    <input id="m-date" name="date" value={form.date} onChange={handleFormChange} type="date" min={minDate} required />
+                  </div>
+                  <div className="vi-field">
+                    <label htmlFor="m-time">Giờ xem <span className="vi-required">*</span></label>
+                    <input id="m-time" name="time" value={form.time} onChange={handleFormChange} type="time" required />
+                  </div>
+                </div>
+                <div className="vi-field">
+                  <label htmlFor="m-note">Ghi chú (không bắt buộc)</label>
+                  <textarea id="m-note" name="note" value={form.note} onChange={handleFormChange} placeholder="VD: Tôi rảnh sau 6 giờ chiều" rows={2} />
+                </div>
+                {formError && <p className="vi-appt-error">{formError}</p>}
+                <button type="submit" className="vi-appt-cta">
+                  <Icon name="calendar" size={15} />
+                  Đặt lịch xem phòng
+                </button>
+                <p className="vi-appt-note">
+                  <Icon name="lock" size={11} />
+                  Miễn phí • Không yêu cầu thanh toán
+                </p>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

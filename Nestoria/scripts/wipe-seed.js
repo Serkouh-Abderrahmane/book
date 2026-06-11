@@ -17,7 +17,7 @@ const { Pool } = require('pg');
 const { createClient } = require('@supabase/supabase-js');
 
 const SEED_HOTEL_SLUGS = [
-  'marigold-house',
+  'chi-vinh-house',
   'aravali-retreat',
   'casa-pamparo',
   'postcard-munnar',
@@ -28,7 +28,7 @@ const SEED_HOTEL_SLUGS = [
 ];
 
 const SEED_HOST_EMAILS = [
-  'vikram@marigold.in',
+  'vikram@chivinhland.vn',
   'priya@casapamparo.in',
   'arjun@cardamom.in',
 ];

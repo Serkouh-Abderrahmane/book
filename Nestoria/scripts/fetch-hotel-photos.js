@@ -44,7 +44,7 @@ const HOTEL_WORDS = [
 
 const SHOOTS = [
   {
-    slug:  'marigold-house',
+    slug:  'chi-vinh-house',
     region:'Rajasthan',
     theme: 'heritage hotel suite',
     rooms: [

@@ -14,24 +14,24 @@ UPDATE hosts SET password_hash = '$2b$10$R/BokQK3A3VqA6amtJlYUepO5dIf4x9e8ZHYZc9
 
 -- 2. Hotel hero images + room images + gallery rows
 
-UPDATE hotels SET hero_image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/marigold-house/hero.jpg' WHERE slug = 'marigold-house';
-DELETE FROM hotel_images WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'marigold-house');
-INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/marigold-house/gallery-1.jpg', 0, NULL FROM hotels WHERE slug = 'marigold-house';
-INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/marigold-house/gallery-2.jpg', 1, NULL FROM hotels WHERE slug = 'marigold-house';
-INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/marigold-house/gallery-3.jpg', 2, NULL FROM hotels WHERE slug = 'marigold-house';
-INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/marigold-house/gallery-4.jpg', 3, NULL FROM hotels WHERE slug = 'marigold-house';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/marigold-house/heritage-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'marigold-house') AND type = 'Heritage Suite';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/marigold-house/garden-room.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'marigold-house') AND type = 'Garden Room';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/marigold-house/maharaja-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'marigold-house') AND type = 'Maharaja Suite';
+UPDATE hotels SET hero_image_url = '/images/chi-vinh-house-hero.svg' WHERE slug = 'chi-vinh-house';
+DELETE FROM hotel_images WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'chi-vinh-house');
+INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, '/images/chi-vinh-house-gallery-1.svg', 0, NULL FROM hotels WHERE slug = 'chi-vinh-house';
+INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, '/images/chi-vinh-house-gallery-2.svg', 1, NULL FROM hotels WHERE slug = 'chi-vinh-house';
+INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, '/images/chi-vinh-house-gallery-3.svg', 2, NULL FROM hotels WHERE slug = 'chi-vinh-house';
+INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, '/images/chi-vinh-house-gallery-4.svg', 3, NULL FROM hotels WHERE slug = 'chi-vinh-house';
+UPDATE rooms SET image_url = '/images/rooms/chi-vinh-house-heritage-suite.svg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'chi-vinh-house') AND room_name = 'Heritage Suite';
+UPDATE rooms SET image_url = '/images/rooms/chi-vinh-house-garden-room.svg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'chi-vinh-house') AND room_name = 'Garden Room';
+UPDATE rooms SET image_url = '/images/rooms/chi-vinh-house-maharaja-suite.svg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'chi-vinh-house') AND room_name = 'Maharaja Suite';
 
-UPDATE hotels SET hero_image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/aravali-retreat/hero.jpg' WHERE slug = 'aravali-retreat';
+UPDATE hotels SET hero_image_url = '/images/aravali-retreat-hero.svg' WHERE slug = 'aravali-retreat';
 DELETE FROM hotel_images WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'aravali-retreat');
-INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/aravali-retreat/gallery-1.jpg', 0, NULL FROM hotels WHERE slug = 'aravali-retreat';
-INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/aravali-retreat/gallery-2.jpg', 1, NULL FROM hotels WHERE slug = 'aravali-retreat';
-INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/aravali-retreat/gallery-3.jpg', 2, NULL FROM hotels WHERE slug = 'aravali-retreat';
-INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/aravali-retreat/gallery-4.jpg', 3, NULL FROM hotels WHERE slug = 'aravali-retreat';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/aravali-retreat/pine-cabin.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'aravali-retreat') AND type = 'Pine Cabin';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/aravali-retreat/stargazer-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'aravali-retreat') AND type = 'Stargazer Suite';
+INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, '/images/aravali-retreat-gallery-1.svg', 0, NULL FROM hotels WHERE slug = 'aravali-retreat';
+INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, '/images/aravali-retreat-gallery-2.svg', 1, NULL FROM hotels WHERE slug = 'aravali-retreat';
+INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, '/images/aravali-retreat-gallery-3.svg', 2, NULL FROM hotels WHERE slug = 'aravali-retreat';
+INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, '/images/aravali-retreat-gallery-4.svg', 3, NULL FROM hotels WHERE slug = 'aravali-retreat';
+UPDATE rooms SET image_url = '/images/rooms/aravali-retreat-pine-cabin.svg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'aravali-retreat') AND room_name = 'Pine Cabin';
+UPDATE rooms SET image_url = '/images/rooms/aravali-retreat-stargazer-suite.svg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'aravali-retreat') AND room_name = 'Stargazer Suite';
 
 UPDATE hotels SET hero_image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/casa-pamparo/hero.jpg' WHERE slug = 'casa-pamparo';
 DELETE FROM hotel_images WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'casa-pamparo');
@@ -39,8 +39,8 @@ INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/casa-pamparo/gallery-2.jpg', 1, NULL FROM hotels WHERE slug = 'casa-pamparo';
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/casa-pamparo/gallery-3.jpg', 2, NULL FROM hotels WHERE slug = 'casa-pamparo';
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/casa-pamparo/gallery-4.jpg', 3, NULL FROM hotels WHERE slug = 'casa-pamparo';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/casa-pamparo/pool-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'casa-pamparo') AND type = 'Pool Suite';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/casa-pamparo/garden-room.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'casa-pamparo') AND type = 'Garden Room';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/casa-pamparo/pool-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'casa-pamparo') AND room_name = 'Pool Suite';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/casa-pamparo/garden-room.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'casa-pamparo') AND room_name = 'Garden Room';
 
 UPDATE hotels SET hero_image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/postcard-munnar/hero.jpg' WHERE slug = 'postcard-munnar';
 DELETE FROM hotel_images WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'postcard-munnar');
@@ -48,8 +48,8 @@ INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/postcard-munnar/gallery-2.jpg', 1, NULL FROM hotels WHERE slug = 'postcard-munnar';
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/postcard-munnar/gallery-3.jpg', 2, NULL FROM hotels WHERE slug = 'postcard-munnar';
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/postcard-munnar/gallery-4.jpg', 3, NULL FROM hotels WHERE slug = 'postcard-munnar';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/postcard-munnar/tea-cabin.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'postcard-munnar') AND type = 'Tea Cabin';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/postcard-munnar/cloud-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'postcard-munnar') AND type = 'Cloud Suite';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/postcard-munnar/tea-cabin.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'postcard-munnar') AND room_name = 'Tea Cabin';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/postcard-munnar/cloud-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'postcard-munnar') AND room_name = 'Cloud Suite';
 
 UPDATE hotels SET hero_image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/the-salt-house/hero.jpg' WHERE slug = 'the-salt-house';
 DELETE FROM hotel_images WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'the-salt-house');
@@ -57,8 +57,8 @@ INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/the-salt-house/gallery-2.jpg', 1, NULL FROM hotels WHERE slug = 'the-salt-house';
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/the-salt-house/gallery-3.jpg', 2, NULL FROM hotels WHERE slug = 'the-salt-house';
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/the-salt-house/gallery-4.jpg', 3, NULL FROM hotels WHERE slug = 'the-salt-house';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/the-salt-house/sea-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'the-salt-house') AND type = 'Sea Suite';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/the-salt-house/plunge-room.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'the-salt-house') AND type = 'Plunge Room';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/the-salt-house/sea-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'the-salt-house') AND room_name = 'Sea Suite';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/the-salt-house/plunge-room.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'the-salt-house') AND room_name = 'Plunge Room';
 
 UPDATE hotels SET hero_image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/silk-route-inn/hero.jpg' WHERE slug = 'silk-route-inn';
 DELETE FROM hotel_images WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'silk-route-inn');
@@ -66,8 +66,8 @@ INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/silk-route-inn/gallery-2.jpg', 1, NULL FROM hotels WHERE slug = 'silk-route-inn';
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/silk-route-inn/gallery-3.jpg', 2, NULL FROM hotels WHERE slug = 'silk-route-inn';
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/silk-route-inn/gallery-4.jpg', 3, NULL FROM hotels WHERE slug = 'silk-route-inn';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/silk-route-inn/fort-room.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'silk-route-inn') AND type = 'Fort Room';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/silk-route-inn/rooftop-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'silk-route-inn') AND type = 'Rooftop Suite';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/silk-route-inn/fort-room.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'silk-route-inn') AND room_name = 'Fort Room';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/silk-route-inn/rooftop-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'silk-route-inn') AND room_name = 'Rooftop Suite';
 
 UPDATE hotels SET hero_image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/house-of-cardamom/hero.jpg' WHERE slug = 'house-of-cardamom';
 DELETE FROM hotel_images WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'house-of-cardamom');
@@ -75,9 +75,9 @@ INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/house-of-cardamom/gallery-2.jpg', 1, NULL FROM hotels WHERE slug = 'house-of-cardamom';
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/house-of-cardamom/gallery-3.jpg', 2, NULL FROM hotels WHERE slug = 'house-of-cardamom';
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/house-of-cardamom/gallery-4.jpg', 3, NULL FROM hotels WHERE slug = 'house-of-cardamom';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/house-of-cardamom/wallace-room.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'house-of-cardamom') AND type = 'Wallace Room';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/house-of-cardamom/pepper-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'house-of-cardamom') AND type = 'Pepper Suite';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/house-of-cardamom/estate-bungalow.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'house-of-cardamom') AND type = 'Estate Bungalow';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/house-of-cardamom/wallace-room.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'house-of-cardamom') AND room_name = 'Wallace Room';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/house-of-cardamom/pepper-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'house-of-cardamom') AND room_name = 'Pepper Suite';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/house-of-cardamom/estate-bungalow.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'house-of-cardamom') AND room_name = 'Estate Bungalow';
 
 UPDATE hotels SET hero_image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/indigo-lodge/hero.jpg' WHERE slug = 'indigo-lodge';
 DELETE FROM hotel_images WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'indigo-lodge');
@@ -85,6 +85,6 @@ INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/indigo-lodge/gallery-2.jpg', 1, NULL FROM hotels WHERE slug = 'indigo-lodge';
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/indigo-lodge/gallery-3.jpg', 2, NULL FROM hotels WHERE slug = 'indigo-lodge';
 INSERT INTO hotel_images (hotel_id, url, position, caption) SELECT id, 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/indigo-lodge/gallery-4.jpg', 3, NULL FROM hotels WHERE slug = 'indigo-lodge';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/indigo-lodge/earth-cabin.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'indigo-lodge') AND type = 'Earth Cabin';
-UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/indigo-lodge/indigo-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'indigo-lodge') AND type = 'Indigo Suite';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/indigo-lodge/earth-cabin.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'indigo-lodge') AND room_name = 'Earth Cabin';
+UPDATE rooms SET image_url = 'https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/rooms/indigo-lodge/indigo-suite.jpg' WHERE hotel_id = (SELECT id FROM hotels WHERE slug = 'indigo-lodge') AND room_name = 'Indigo Suite';
 

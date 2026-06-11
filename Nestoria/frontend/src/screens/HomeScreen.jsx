@@ -2,6 +2,7 @@ import { useNavigate, useLocation as useRouterLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query';
 
 import RoomCard from '../components/RoomCard.jsx';
+import HeroFilter from '../components/HeroFilter.jsx';
 import { SkeletonCard } from '../components/Skeleton.jsx';
 import Photo from '../components/Photo.jsx';
 import Icon from '../components/Icon.jsx';
@@ -50,10 +51,10 @@ export default function HomeScreen() {
 
   return (
     <div>
-      {/* HERO — Brand showcase */}
+      {/* HERO — Brand showcase with filters */}
       <section className="hero">
         <div className="hero-bg" />
-        <div className="hero-content" style={{ maxWidth: 720 }}>
+        <div className="hero-content" style={{ maxWidth: 900 }}>
           <div className="hero-badge">
             <Icon name="home" size={14} />
             Chi Vinh Land
@@ -67,14 +68,8 @@ export default function HomeScreen() {
             Nhà thuê và căn hộ chất lượng tại TP. Hồ Chí Minh.
           </p>
 
-          <div className="row mt-6" style={{ gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button className="btn btn-accent btn-lg" onClick={() => navigate('/')}>
-              Khám phá nhà cho thuê <Icon name="arrow-right" size={16} />
-            </button>
-            <button className="btn btn-ghost btn-lg" onClick={() => navigate('/about')}>
-              Về Chi Vinh Land
-            </button>
-          </div>
+          {/* Hero Filter */}
+          <HeroFilter />
 
           <div className="hero-districts row mt-5" style={{ justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>Khu vực phổ biến:</span>

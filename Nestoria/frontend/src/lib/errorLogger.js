@@ -37,7 +37,10 @@ function isDev() {
   if (typeof import.meta !== 'undefined' && typeof import.meta.env !== 'undefined') {
     if (import.meta.env.DEV) return true;
   }
-  return typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
+  if (typeof location === 'undefined') return false;
+  const host = location.hostname;
+  // Only treat as dev if explicitly localhost/127.0.0.1, NOT tunnelmole/ngrok URLs
+  return host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0';
 }
 
 function getComponentStack(error) {

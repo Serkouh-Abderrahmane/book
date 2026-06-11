@@ -239,7 +239,7 @@ If you load the seed file you get a believable dev dataset:
 
 - **10 amenities** matching the UI icon set
 - **3 hosts** (one Superhost)
-- **8 hotels** mirroring the design's editorial copy — The Marigold House, Aravali Retreat, Casa Pamparo, Postcard from Munnar, The Salt House, Silk Route Inn, House of Cardamom, Indigo Lodge
+- **8 hotels** mirroring the design's editorial copy — Chi Vinh House, Aravali Retreat, Casa Pamparo, Postcard from Munnar, The Salt House, Silk Route Inn, House of Cardamom, Indigo Lodge
 - **18 rooms** with realistic INR pricing
 - Hotel ↔ amenity links per the design
 - Room amenities (every room gets wifi + ac; suites add tv)

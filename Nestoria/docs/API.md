@@ -83,7 +83,7 @@ Returns up to 100 hotels with embedded amenities:
 {
   "hotels": [
     {
-      "id": 1, "slug": "marigold-house", "name": "The Marigold House",
+      "id": 1, "slug": "chi-vinh-house", "name": "Chi Vinh House",
       "region": "Rajasthan", "city": "Udaipur",
       "hero_image_url": null, "hue": "sand", "badge": "Editor's pick",
       "price_from": 9800, "rating_avg": 4.7, "rating_count": 18, "score": 78,
@@ -98,7 +98,7 @@ Returns up to 100 hotels with embedded amenities:
 Aggregated city + region list for the home page.
 
 ```json
-{ "destinations": [ { "name": "Udaipur", "region": "Rajasthan", "stays": 2, "hue": "sand", "hero_image_url": "https://…/marigold-house/hero.jpg" }, … ] }
+ { "destinations": [ { "name": "Udaipur", "region": "Rajasthan", "stays": 2, "hue": "sand", "hero_image_url": "https://…/chi-vinh-house/hero.jpg" }, … ] }
 ```
 
 The `hero_image_url` is the first non-null hotel hero from each city — used to fill the destination cards on the home page.
@@ -110,7 +110,7 @@ Full hotel detail including amenities, rooms, recent reviews and gallery.
 ```json
 {
   "hotel": {
-    "id": 1, "slug": "marigold-house", "name": "…", "description": "…",
+    "id": 1, "slug": "chi-vinh-house", "name": "…", "description": "…",
     "address": "…", "checkin_time": "15:00:00", "checkout_time": "11:00:00",
     "host_name": "Vikram Singh", "host_business": "Marigold Hospitality", "host_superhost": true,
     "amenities": [ … ],
@@ -214,7 +214,7 @@ The response is rich enough to power the `/reservations/:id` screen without a se
     "checkin_date": "2026-06-10", "checkout_date": "2026-06-13", "guests": 2,
     "base_amount": 36000, "tax_amount": 6480, "total_amount": 42480,
     "room_type": "Heritage Suite", "room_view": "Lake", "room_image": "…",
-    "hotel_name": "The Marigold House", "hotel_slug": "marigold-house",
+    "hotel_name": "Chi Vinh House", "hotel_slug": "chi-vinh-house",
     "hotel_city": "Udaipur", "hotel_region": "Rajasthan", "hotel_hue": "sand",
     "hotel_hero": "…", "hotel_phone": "+91 294 555 0142", "hotel_address": "…",
     "has_review": false
@@ -270,7 +270,7 @@ Reset password (the user supplies the current password unless their record only 
 Returns the authenticated user's saved hotels. Works for both customer and host roles (favourites are role-scoped, so each role keeps its own list).
 
 ```json
-{ "ids": [1, 4, 7], "hotels": [ { "id": 1, "slug": "marigold-house", "name": "…", "city": "Udaipur", "region": "Rajasthan", "hue": "sand", "hero_image_url": "…", "price_from": 14800, "rating_avg": 4.83, "rating_count": 12, "badge": "Hand-picked" }, … ] }
+ { "ids": [1, 4, 7], "hotels": [ { "id": 1, "slug": "chi-vinh-house", "name": "…", "city": "Udaipur", "region": "Rajasthan", "hue": "sand", "hero_image_url": "…", "price_from": 14800, "rating_avg": 4.83, "rating_count": 12, "badge": "Hand-picked" }, … ] }
 ```
 
 ### `POST /api/profile/saved/:hotelId`

@@ -87,3 +87,21 @@ export const uploadAPI = {
     return api.post('/upload/room-image', fd, { headers: { 'Content-Type': 'multipart/form-data' } }).then((r) => r.data);
   },
 };
+export const viewingsAPI = {
+  create:   (body) => api.post('/viewings', body).then((r) => r.data),
+  list:     (params) => api.get('/viewings', { params }).then((r) => r.data),
+  detail:   (id)   => api.get(`/viewings/${id}`).then((r) => r.data),
+  updateStatus: (id, body) => api.put(`/viewings/${id}/status`, body).then((r) => r.data),
+  remove:   (id)   => api.delete(`/viewings/${id}`).then((r) => r.data),
+};
+
+export const adminAPI = {
+  dashboard:     ()       => api.get('/admin/dashboard').then((r) => r.data),
+  hotels:        (params) => api.get('/admin/hotels', { params }).then((r) => r.data),
+  rooms:         (params) => api.get('/admin/rooms', { params }).then((r) => r.data),
+  bookings:      (params) => api.get('/admin/bookings', { params }).then((r) => r.data),
+  reviews:       (params) => api.get('/admin/reviews', { params }).then((r) => r.data),
+  users:         ()       => api.get('/admin/users').then((r) => r.data),
+  getSettings:   ()       => api.get('/admin/settings').then((r) => r.data),
+  updateSettings:(body)   => api.put('/admin/settings', body).then((r) => r.data),
+};

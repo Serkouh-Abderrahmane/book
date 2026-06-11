@@ -45,6 +45,8 @@ export default function Icon({ name, size = 18, stroke = 1.6, ...props }) {
     case 'logout':       return (<svg {...common}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>);
     case 'compass':      return (<svg {...common}><circle cx="12" cy="12" r="9"/><path d="m15 9-3 6-3-3 6-3Z"/></svg>);
     case 'sparkle':      return (<svg {...common}><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.5 5.5l2.5 2.5M16 16l2.5 2.5M16 8l2.5-2.5M5.5 18.5 8 16"/></svg>);
+    case 'eye':          return (<svg {...common}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>);
+    case 'trash':        return (<svg {...common}><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-.87 14.1A2 2 0 0 1 16.14 22H7.86a2 2 0 0 1-1.99-1.9L5 6"/></svg>);
     case 'home':         return (<svg {...common}><path d="M21 20V9.5l-9-7-9 7V20a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1Z"/><path d="M9 21V12h6v9"/></svg>);
     case 'maximize':     return (<svg {...common}><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>);
     case 'bed':          return (<svg {...common}><path d="M2 14v6h20v-6M2 14V8a2 2 0 0 1 2-2h7v8M2 14h20"/><path d="M13 6h5a2 2 0 0 1 2 2v6"/><path d="M2 20h20"/></svg>);

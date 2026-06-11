@@ -49,13 +49,13 @@ export default function BecomeHostScreen() {
             </div>
             <div className="fade-up d2">
               <div className="hero-image-frame">
-                <Photo hue="forest" src="https://twsdesejcimvmrbopdwj.supabase.co/storage/v1/object/public/hotel-images/hotels/house-of-cardamom/hero.jpg" alt="House of Cardamom" />
+                <Photo hue="forest" src="/images/chi-vinh-house-hero.svg" alt="Nhà Chi Vinh" />
                 <div className="hero-photo-meta">
                   <div>
-                    <div style={{ fontSize: 22, lineHeight: 1.1 }}>House of Cardamom</div>
-                    <div className="mono mt-2">Đà Lạt · Việt Nam</div>
+                    <div style={{ fontSize: 22, lineHeight: 1.1 }}>Nhà Chi Vinh - Demo</div>
+                    <div className="mono mt-2">TP. Hồ Chí Minh · Việt Nam</div>
                   </div>
-                  <div className="mono">thành lập 1934</div>
+                  <div className="mono">niêm yết demo</div>
                 </div>
               </div>
             </div>
@@ -130,7 +130,7 @@ export default function BecomeHostScreen() {
             <span className="avatar">V</span>
             <div style={{ textAlign: 'left' }}>
               <div style={{ fontSize: 14, fontWeight: 500 }}>Vikram Singh</div>
-              <div className="text-muted" style={{ fontSize: 12 }}>The Marigold House, Huế · Đối tác từ 2024</div>
+              <div className="text-muted" style={{ fontSize: 12 }}>Chi Vinh House, Huế · Đối tác từ 2024</div>
             </div>
           </div>
         </div>

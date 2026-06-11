@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const { authenticate, requireHost } = require('../../middleware/auth');
-const { detail, availability, create, update, remove } = require('./controller');
+const { list, detail, availability, create, update, remove } = require('./controller');
 
+router.get('/',                 list);
 router.get('/:id',              detail);
 router.get('/:id/availability', availability);
 

@@ -9,7 +9,7 @@ const PROXY_PORT = 8000;
 const proxy = httpProxy.createProxy({ ws: true });
 
 const server = http.createServer((req, res) => {
-  const target = req.url.startsWith('/api/')
+  const target = req.url.startsWith('/api/') || req.url.startsWith('/uploads/')
     ? { target: 'http://localhost:' + BE_PORT }
     : { target: 'http://localhost:' + FE_PORT };
   proxy.web(req, res, target, (err) => {
@@ -20,6 +20,7 @@ const server = http.createServer((req, res) => {
 
 server.listen(PROXY_PORT, () => {
   console.log('Proxy listening on http://localhost:' + PROXY_PORT);
-  console.log('  /api/*  -> backend :' + BE_PORT);
-  console.log('  /*      -> frontend:' + FE_PORT);
+  console.log('  /api/*     -> backend :' + BE_PORT);
+  console.log('  /uploads/* -> backend :' + BE_PORT);
+  console.log('  /*         -> frontend:' + FE_PORT);
 });

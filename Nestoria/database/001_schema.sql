@@ -86,6 +86,7 @@ CREATE TABLE hotels (
     rating_avg      NUMERIC(2,1) NOT NULL DEFAULT 0,
     rating_count    INTEGER NOT NULL DEFAULT 0,
     score           INTEGER NOT NULL DEFAULT 0,   -- 0-100 Bayesian composite
+    property_type   TEXT,                  -- "Phòng trọ", "Căn hộ 3N2W", "Căn hộ 2N2W", "Căn hộ 2N1W", "Căn hộ 1N", "Căn hộ studio", "Căn hộ chung cư mini"
     created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );

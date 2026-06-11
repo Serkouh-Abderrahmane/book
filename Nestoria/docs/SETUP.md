@@ -470,7 +470,7 @@ If you loaded the seed data (`004_seed.sql`), every seeded account uses the pass
 - `customer1@nestoria.dev` through `customer50@nestoria.dev`
 
 **Host accounts:**
-- `vikram@marigold.in` (Superhost, owns 3 properties incl. The Marigold House)
+- `vikram@chivinhland.vn` (Superhost, owns 3 properties incl. Chi Vinh House)
 - `priya@casapamparo.in` (owns Casa Pamparo + The Salt House)
 - `arjun@cardamom.in` (owns House of Cardamom + others)
 

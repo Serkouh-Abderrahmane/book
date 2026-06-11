@@ -46,7 +46,7 @@ function BookingsTable({ bookings }) {
   return (
     <div className="bookings-table">
       <div className="bookings-row bookings-head">
-        <div>Người thuê</div><div>Nhà · Loại</div><div>Ngày</div><div>Trạng thái</div><div style={{ textAlign: 'right' }}>Tổng</div>
+        <div>Người thuê</div><div>Căn nhà · Loại</div><div>Ngày</div><div>Trạng thái</div><div style={{ textAlign: 'right' }}>Tổng</div>
       </div>
       {bookings.map((b) => (
         <div className="bookings-row" key={b.id}>
@@ -177,6 +177,20 @@ export default function HostScreen({ tab: initialTab }) {
 
       {tab === 'overview' && (
         <div className="reveal" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div className="card" style={{ padding: 24, gridColumn: '1 / -1' }}>
+            <div className="row" style={{ gap: 12, flexWrap: 'wrap' }}>
+              <span className="eyebrow" style={{ marginRight: 12 }}>— Điều hướng nhanh</span>
+              <button className="btn btn-ghost btn-sm" onClick={() => navigate('/host/viewings')}>
+                <Icon name="calendar" size={13} /> Lịch xem phòng
+              </button>
+              <button className="btn btn-ghost btn-sm" onClick={() => navigate('/host/add-rooms')}>
+                <Icon name="plus" size={13} /> Thêm nhà cho thuê
+              </button>
+              <button className="btn btn-ghost btn-sm" onClick={() => navigate('/host/profile')}>
+                <Icon name="user" size={13} /> Hồ sơ đối tác
+              </button>
+            </div>
+          </div>
           <div className="card" style={{ padding: 28 }}>
             <div className="row" style={{ justifyContent: 'space-between', marginBottom: 24 }}>
               <div>

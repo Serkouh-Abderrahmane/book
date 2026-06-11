@@ -65,13 +65,12 @@ export default function LoginScreen() {
   return (
     <div className="auth">
       <div className="auth-side">
-        <Photo hue="dusk" src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80&auto=format&fit=crop" alt="" />
-        <div className="auth-quote">
-          <span className="eyebrow" style={{ color: 'white', opacity: 0.85 }}>— Chi Vinh Land</span>
-          <h2 className="h-2 mt-4" style={{ color: 'white' }}>"Ngôi nhà tốt nhất là nơi bạn cảm thấy mình thuộc về."</h2>
-          <span className="text-mono" style={{ opacity: 0.75, fontSize: 12 }}>— Riya B., về The Marigold House</span>
-        </div>
-      </div>
+         <Photo hue="dusk" src="/images/chi-vinh-house-hero.svg" alt="" />
+         <div className="auth-quote">
+           <span className="eyebrow" style={{ color: 'white', opacity: 0.85 }}>— Chi Vinh Land</span>
+           <h2 className="h-2 mt-4" style={{ color: 'white' }}>Nhà thuê & căn hộ chất lượng TP. Hồ Chí Minh.</h2>
+         </div>
+       </div>
 
       <div className="auth-form-wrap">
         <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>

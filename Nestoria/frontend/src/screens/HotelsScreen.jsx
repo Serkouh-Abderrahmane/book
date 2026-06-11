@@ -12,6 +12,7 @@ import { useSavedHotels } from '../hooks/useSavedHotels.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useFilters } from '../hooks/useFilters.js';
+import { ROOM_TYPE_OPTIONS } from '../lib/filterConstants.js';
 
 export default function HotelsScreen() {
   const [params, setParams] = useSearchParams();
@@ -21,7 +22,7 @@ export default function HotelsScreen() {
   const { isSaved, toggle: toggleSave } = useSavedHotels();
   usePageTitle('Tìm nhà');
 
-  const { filters, activeFilterCount, resetFilters } = useFilters();
+  const { filters, activeFilterCount, resetFilters, getPriceRange } = useFilters();
 
   const location = params.get('location') || '';
 
@@ -60,11 +61,24 @@ export default function HotelsScreen() {
     toggleSave(id);
   };
 
+  // Parse room type filter into property_type
+  const parseRoomType = () => {
+    if (!filters.roomType) return {};
+    if (filters.roomType === 'CAN_HO') return { property_type: 'CAN_HO' };
+    const opt = ROOM_TYPE_OPTIONS.find((o) => o.id === filters.roomType);
+    if (!opt) return {};
+    return { property_type: opt.property_type };
+  };
+
+  const priceRange = getPriceRange();
+  const roomTypeParams = parseRoomType();
+
   const apiParams = {
     location: location || undefined,
-    min_price: filters.minPrice > 0 ? filters.minPrice : undefined,
-    max_price: filters.maxPrice < 30000 ? filters.maxPrice : undefined,
-    min_rating: filters.minRating || undefined,
+    property_type: roomTypeParams.property_type,
+    min_price: priceRange.min > 0 ? priceRange.min : undefined,
+    max_price: priceRange.max < 100000 ? priceRange.max : undefined,
+    amenities: filters.amenities.length > 0 ? filters.amenities.join(',') : undefined,
     sort,
   };
 
@@ -90,10 +104,10 @@ export default function HotelsScreen() {
   return (
     <div className="container-wide page-enter" style={{ paddingTop: 28, paddingBottom: 90 }}>
       <div className="mb-6">
-        <div className="eyebrow mb-3">— {location ? `Tìm kiếm · ${location}` : 'Nhà cho thuê'}</div>
+        <div className="eyebrow mb-3">— CĂN HỘ & PHÒNG TRỌ</div>
         <div className="list-head">
           <h1 className="h-1" style={{ fontSize: 'clamp(22px, 3.5vw, 38px)' }}>
-            {isLoading ? '…' : filtered.length} nhà cho thuê{location ? ` tại ${location}` : ' tại TP. Hồ Chí Minh'}.
+            {isLoading ? '…' : filtered.length} Căn hộ và phòng trọ chất lượng TP.HCM.
           </h1>
         </div>
 
@@ -140,7 +154,7 @@ export default function HotelsScreen() {
 
       <div className="hotels-toolbar">
         <div className="show-mobile sort" style={{ width: '100%', justifyContent: 'flex-start' }}>
-          {[['score','Nổi bật'],['price_asc','Giá ↑'],['price_desc','Giá ↓'],['rating','Đánh giá']].map(([k,l]) => (
+          {[['price_asc','Giá ↑'],['price_desc','Giá ↓']].map(([k,l]) => (
             <button key={k} className={`sort-btn ${sort===k ? 'is-active' : ''}`} onClick={() => setSortAndUrl(k)}>{l}</button>
           ))}
         </div>
@@ -162,7 +176,7 @@ export default function HotelsScreen() {
           <div className="list-head hide-mobile">
             <div className="list-results">{isLoading ? 'Đang tải…' : `${filtered.length} kết quả`}</div>
             <div className="sort">
-          {[['score','Nổi bật'],['price_asc','Giá ↑'],['price_desc','Giá ↓'],['rating','Đánh giá']].map(([k,l]) => (
+          {[['price_asc','Giá ↑'],['price_desc','Giá ↓']].map(([k,l]) => (
                 <button key={k} className={`sort-btn ${sort===k ? 'is-active' : ''}`} onClick={() => setSortAndUrl(k)}>{l}</button>
               ))}
             </div>
@@ -221,7 +235,7 @@ export default function HotelsScreen() {
             </div>
 
             <div className="filter-content">
-              <FilterBar />
+            <FilterBar onClose={() => setFiltersOpen(false)} activeFilterCount={activeFilterCount} />
             </div>
 
             <div className="filter-footer">

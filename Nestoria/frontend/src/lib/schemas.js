@@ -49,6 +49,7 @@ export const hotelBasicsSchema = z.object({
   city: z.string().min(1, 'Vui lòng nhập thành phố'),
   description: z.string().min(20, 'Mô tả cần tối thiểu 20 ký tự'),
   hue: z.enum(['sand', 'ocean', 'forest', 'dusk', 'warm', 'cool']).default('sand'),
+  property_type: z.enum(['Phòng trọ','Căn hộ 3N2W','Căn hộ 2N2W','Căn hộ 2N1W','Căn hộ 1N','Căn hộ studio','Căn hộ chung cư mini'], { required_error: 'Vui lòng chọn loại nhà' }),
 });
 export const hotelAddressSchema = z.object({
   address: z.string().min(5, 'Địa chỉ không được để trống'),
@@ -62,11 +63,58 @@ export const hotelAddressSchema = z.object({
 
 export const roomSchema = z.object({
   name: z.string().min(2, 'Tên phòng không được để trống'),
+  loai_phong_chinh: z.enum(['CAN_HO', 'PHONG_TRO'], { required_error: 'Vui lòng chọn loại phòng', message: 'Loại phòng không hợp lệ' }),
+  loai_can_ho: z.string().optional().nullable(),
+  property_type: z.enum(['Phòng trọ','Căn hộ 3N2W','Căn hộ 2N2W','Căn hộ 2N1W','Căn hộ 1N','Căn hộ studio','Căn hộ chung cư mini']).optional(),
   type: z.string().min(2, 'Loại phòng không được để trống'),
   view: z.string().optional().or(z.literal('')),
   beds: z.string().optional().or(z.literal('')),
   size_sqm: z.coerce.number().int().min(1).optional(),
   price_per_night: z.coerce.number().int().min(1, 'Vui lòng nhập giá'),
   hue: z.enum(['sand', 'ocean', 'forest', 'dusk', 'warm', 'cool']).default('sand'),
-  special_amenities: z.string().min(2, 'Liệt kê ít nhất một tiện nghi đặc biệt (phân cách bằng dấu phẩy)'),
+  special_amenities: z.string().optional().or(z.literal('')),
+  electricity_price: z.coerce.number().int().min(0).optional().or(z.literal('')),
+  water_price: z.coerce.number().int().min(0).optional().or(z.literal('')),
+  management_fee: z.coerce.number().int().min(0).optional().or(z.literal('')),
+  parking_fee: z.coerce.number().int().min(0).optional().or(z.literal('')),
+  has_window: z.boolean().optional(),
+  has_mattress: z.boolean().optional(),
+  toilet_type: z.string().optional().or(z.literal('')),
+  hour_rule: z.string().optional().or(z.literal('')),
+  washing_machine: z.string().optional().or(z.literal('')),
+  has_balcony: z.boolean().optional(),
+  allow_pets: z.boolean().optional(),
+  parking_type: z.string().optional().or(z.literal('')),
+  ev_charger: z.boolean().optional(),
+  structure_desc_title: z.string().optional().or(z.literal('')),
+  structure_desc_vi_tri: z.string().optional().or(z.literal('')),
+  structure_desc_tien_ich_xq: z.string().optional().or(z.literal('')),
+  structure_desc_thuc_te: z.string().optional().or(z.literal('')),
+}).superRefine((data, ctx) => {
+  if (data.loai_phong_chinh === 'CAN_HO') {
+    if (!data.loai_can_ho || !['CH_3N2W', 'CH_2N2W', 'CH_2N1W', 'STUDIO'].includes(data.loai_can_ho)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['loai_can_ho'],
+        message: 'Vui lòng chọn loại căn hộ',
+      });
+    }
+  } else if (data.loai_phong_chinh === 'PHONG_TRO' && data.loai_can_ho) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['loai_can_ho'],
+      message: 'Loại căn hộ chỉ áp dụng cho Căn hộ',
+    });
+  }
+});
+
+export const viewingSchema = z.object({
+  hotel_id: z.number().int().positive(),
+  room_id: z.number().int().positive().optional(),
+  customer_name: z.string().min(2, 'Vui lòng nhập họ tên'),
+  customer_phone: z.string().min(8, 'Số điện thoại không hợp lệ'),
+  customer_email: z.string().email('Email không hợp lệ').optional().or(z.literal('')),
+  preferred_date: z.string().min(1, 'Chọn ngày xem'),
+  preferred_time: z.string().min(1, 'Chọn giờ xem'),
+  note: z.string().optional().or(z.literal('')),
 });
