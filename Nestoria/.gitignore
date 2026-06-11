@@ -4,7 +4,7 @@ node_modules/
 /backend/.env
 /frontend/.env
 /frontend/node_modules/
-/frontend/build/
+# /frontend/build/
 /frontend/dist/
 *.log
 *.err

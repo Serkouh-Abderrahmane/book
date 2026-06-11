@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="100%" height="100%" fill="#fff8f0"/>
+  <rect x="40" y="40" width="540" height="360" fill="#f2f2f2" stroke="#e0e0e0"/>
+  <rect x="620" y="40" width="540" height="360" fill="#f9f9f9" stroke="#eaeaea"/>
+  <text x="60" y="460" font-size="28" fill="#444">Phòng khách hiện đại</text>
+</svg>
