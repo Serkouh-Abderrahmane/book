@@ -1,10 +1,11 @@
 /* Hero Filter Container */
 .hero-filter-container {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   padding: clamp(16px, 4vw, 28px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-xl);
   margin-top: clamp(24px, 8vw, 48px);
   max-width: 100%;
   animation: heroSearch 0.6s cubic-bezier(0.33, 1, 0.68, 1) both 0.4s;
@@ -47,7 +48,7 @@
 .hero-filter-label {
   font-size: clamp(11px, 1.5vw, 12px);
   font-weight: 600;
-  color: #6b7280;
+  color: var(--ink-3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 6px;
@@ -60,12 +61,12 @@
   padding: clamp(8px, 2vw, 12px);
   font-size: clamp(13px, 1.5vw, 14px);
   font-weight: 500;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7280' d='M1 1l5 5 5-5'/%3E%3C/svg%3E")
+  background: var(--bg-elev) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7280' d='M1 1l5 5 5-5'/%3E%3C/svg%3E")
     no-repeat right 8px center;
   background-size: 12px 8px;
-  color: #111827;
+  color: var(--ink);
   outline: none;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -74,19 +75,19 @@
 }
 
 .hero-filter-select:hover {
-  border-color: #d1d5db;
-  background-color: #f9fafb;
+  border-color: var(--line-strong);
+  background-color: var(--bg-inset);
 }
 
 .hero-filter-select:focus {
-  border-color: #1a3a6b;
-  box-shadow: 0 0 0 3px rgba(26, 58, 107, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-bg);
 }
 
 .hero-filter-select:disabled {
-  background-color: #f3f4f6;
-  border-color: #e5e7eb;
-  color: #9ca3af;
+  background-color: var(--bg-inset);
+  border-color: var(--line);
+  color: var(--ink-4);
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -94,21 +95,29 @@
 /* Button */
 .hero-filter-button {
   width: 100%;
-  padding: clamp(8px, 2vw, 12px);
+  padding: clamp(10px, 2vw, 14px);
   font-size: clamp(13px, 1.5vw, 14px);
   font-weight: 600;
-  background: #1a3a6b;
+  background: var(--gradient-brand);
   color: #fff;
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s var(--transition-bounce);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   min-height: 44px;
   margin-top: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-filter-button::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.12));
+  opacity: 0; transition: opacity .3s ease;
 }
 
 @media (min-width: 1024px) {
@@ -118,9 +127,12 @@
 }
 
 .hero-filter-button:hover {
-  background: #0f2543;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(26, 58, 107, 0.2);
+  box-shadow: var(--primary-glow);
+}
+
+.hero-filter-button:hover::before {
+  opacity: 1;
 }
 
 .hero-filter-button:active {
@@ -129,13 +141,12 @@
 
 .hero-filter-button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(26, 58, 107, 0.2);
+  box-shadow: 0 0 0 3px var(--primary-bg);
 }
 
 .hero-filter-button.is-hovering {
-  background: #0f2543;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(26, 58, 107, 0.2);
+  box-shadow: var(--primary-glow);
 }
 
 /* Mobile Optimizations */

@@ -36,6 +36,7 @@ export default function MobileNav() {
       <div className="mobile-nav-inner">
         {TABS.map((t) => (
           <NavLink key={t.to} to={t.to} end className={`mobile-nav-link ${isActiveTab(t.to) ? 'is-active' : ''}`}>
+            <span className="nav-indicator" />
             <NavIcon name={t.icon} size={18} />
             <span>{t.label}</span>
           </NavLink>

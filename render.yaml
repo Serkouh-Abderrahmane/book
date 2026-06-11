@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: chi-vinh-land
+    runtime: static
+    repo: https://github.com/Serkouh-Abderrahmane/book
+    buildCommand: cd Nestoria/frontend && npm install && npm run build
+    staticPublishPath: Nestoria/frontend/build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: /api

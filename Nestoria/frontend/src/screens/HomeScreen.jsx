@@ -50,7 +50,7 @@ export default function HomeScreen() {
   const POPULAR = DISTRICTS['Thành phố Hồ Chí Minh'] || [];
 
   return (
-    <div>
+    <div className="page-enter">
       {/* HERO — Brand showcase with filters */}
       <section className="hero">
         <div className="hero-bg" />
@@ -251,7 +251,7 @@ export default function HomeScreen() {
             <p className="mt-3" style={{ maxWidth: 400, margin: '12px auto 0', color: 'rgba(255,255,255,0.7)', fontSize: 15 }}>
               Từ căn hộ Quận 1 đến nhà nguyên căn Thủ Đức — tìm không gian sống phù hợp với bạn.
             </p>
-            <button className="btn btn-accent btn-lg mt-5" onClick={() => navigate('/')}>
+            <button className="btn btn-gradient btn-lg mt-5" onClick={() => navigate('/')}>
               Khám phá nhà cho thuê <Icon name="arrow-right" size={16} />
             </button>
           </div>

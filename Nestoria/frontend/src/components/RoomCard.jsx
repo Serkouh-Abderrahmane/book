@@ -130,6 +130,7 @@ export default function RoomCard({
     >
       <div className="room-card-img">
         <Photo hue={hotel.hue} src={imageUrl} alt={cardTitle} />
+        <div className="room-card-img-overlay" />
         <PropertyTypeBadge type={badgeType} />
         {onSave && (
           <button
@@ -142,6 +143,10 @@ export default function RoomCard({
             </svg>
           </button>
         )}
+        <div className="room-card-price-float">
+          <span className="room-card-price-amount">{formatPrice(price)}₫</span>
+          <span className="room-card-price-unit">/{priceUnit}</span>
+        </div>
       </div>
 
       <div className="room-card-body">
@@ -157,7 +162,7 @@ export default function RoomCard({
           )}
         </div>
 
-        <div className="room-card-price">
+        <div className="room-card-price-inline">
           <span className="room-card-price-amount">{formatPrice(price)}₫</span>
           <span className="room-card-price-unit">/{priceUnit}</span>
         </div>
