@@ -2,7 +2,7 @@ Nestoria/backend/node_modules/
 Nestoria/backend/.env
 Nestoria/frontend/.env
 Nestoria/frontend/node_modules/
-Nestoria/frontend/build/
+# Nestoria/frontend/build/  # build is committed for Render (Vite build fails on Render)
 Nestoria/frontend/dist/
 *.log
 *.err
